@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
-import entities from './entities/reducers'
-import users from './users/reducers'
+import entities from './entities'
+import users from './users'
 
 const reducers = combineReducers({
   entities,

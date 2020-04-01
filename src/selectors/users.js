@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect'
 import get from 'lodash/fp/get'
-import { getEntityById, getEntitiesObject, getEntitiesByIds } from '../entities/selector'
+import { getEntityById, getEntitiesObject, getEntitiesByIds } from './entities'
 
 export const getUsersObject = state => getEntitiesObject(state, 'users')
 

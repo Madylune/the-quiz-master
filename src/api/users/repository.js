@@ -2,8 +2,8 @@ import { getFirebaseUser, signInAnonymously, listenFirebaseNode, signOut } from 
 import { update, login, listen } from './index'
 import { dispatch } from '../../store'
 import { normalize } from 'normalizr'
-import { updateEntities } from '../../entities/actions'
-import { USERS_SET_CURRENT_USER } from '../../users/actions'
+import { updateEntities } from '../../actions/entities'
+import { USERS_SET_CURRENT_USER } from '../../actions/users'
 
 export const fetchUser = async () => {
   try {

@@ -1,4 +1,4 @@
-import { ENTITIES_UPDATE, ENTITIES_REMOVE } from './actions'
+import { ENTITIES_UPDATE, ENTITIES_REMOVE } from '../actions/entities'
 import getOr from 'lodash/fp/getOr'
 import omit from 'lodash/fp/omit'
 
