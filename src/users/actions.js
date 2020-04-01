@@ -1,0 +1,1 @@
+export const USERS_SET_CURRENT_USER = 'users.set.current.user'
