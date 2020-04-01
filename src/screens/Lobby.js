@@ -1,8 +1,8 @@
 import React from 'react'
 
-const Waiting = () => 
+const Lobby = () => 
   <div>
     En attente des joueurs ...
   </div>
 
-export default Waiting
+export default Lobby

@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import CreatePlayer from '../components/CreatePlayer'
+import CreateSession from '../components/CreateSession'
 
 const StyledHome = styled.div`
   margin: 0;
@@ -33,7 +33,7 @@ const Home = () =>
       The Quiz Master
       <StyledCrown src={require('../assets/img/crown.png')} alt="Couronne" />
     </StyledTitle>
-    <CreatePlayer />
+    <CreateSession />
   </StyledHome>
 
 export default Home
