@@ -126,3 +126,7 @@ export const leaveSession = async data => {
     })
   }
 }
+
+export const startSession = async data => {
+  
+}

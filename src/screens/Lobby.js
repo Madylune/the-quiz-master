@@ -85,8 +85,11 @@ const Lobby = ({ users, currentUser, session }) => {
     </StyledCode>
 
     <StyledContent>
-      <Settings isDisabled={size(users) <= 1 || !sessionCreator} />
-
+      <Settings 
+        isDisabled={size(users) <= 1 || !sessionCreator} 
+        users={users} 
+        session={session}
+      />
       <StyledCard>
       <Typography variant="h5">Joueurs connectés</Typography>
         <StyledPlayers>

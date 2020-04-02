@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Button, Typography, Input, InputLabel, FormControl } from '@material-ui/core'
+import { startSession } from '../api/sessions/repository'
 
 const StyledSettings = styled.div`
   margin: 30px;
@@ -21,12 +22,19 @@ const StyledFormControl = styled(FormControl)`
   }
 `
 
-const Settings = ({ isDisabled }) => {
+const Settings = ({ isDisabled, session, users }) => {
   const [ round, setRound ] = useState(2)
   const onRoundChange = e => setRound(e.target.value)
 
   const [ time, setTime ] = useState(5)
   const onTimeChange = e => setTime(e.target.value)
+
+  const onStartGame = async () => 
+    await startSession({ 
+      id: session.id
+    })
+  
+
   return (
     <StyledSettings>
       <Typography variant="h5">Paramètres</Typography>
@@ -50,7 +58,12 @@ const Settings = ({ isDisabled }) => {
           disabled={isDisabled}
         />
       </StyledFormControl>
-      <Button color="primary" variant="contained" disabled={isDisabled}>
+      <Button 
+        color="primary" 
+        variant="contained" 
+        disabled={isDisabled}
+        onClick={onStartGame}
+      >
         Démarrer la partie
       </Button>
     </StyledSettings>
