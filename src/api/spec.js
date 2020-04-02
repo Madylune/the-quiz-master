@@ -1,7 +1,7 @@
-import pickBy from 'lodash/fp/pickBy'
-import negate from 'lodash/fp/negate'
-import isUndefined from 'lodash/fp/isUndefined'
+import pickBy from 'lodash/pickBy'
+import negate from 'lodash/negate'
+import isUndefined from 'lodash/isUndefined'
 
-const cleanSpec = entity => pickBy(negate(isUndefined), entity)
+const cleanSpec = entity => pickBy(entity, negate(isUndefined))
 
 export default cleanSpec

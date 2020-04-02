@@ -2,10 +2,11 @@ import { dispatch } from '../../store'
 import { SESSIONS_CREATE_ERROR } from '../../actions/sessions'
 import { generateCode } from '../../utils/sessions'
 import { getFirebaseUser, timestamp } from '../firebase'
-import { listen, stopListen, create, fetch, fetchByCode } from './index'
+import { listen, stopListen, create, fetch, fetchByCode, updateUsers, leaveUsers } from './index'
 import get from 'lodash/fp/get'
 import { normalize } from '../../schema'
 import { updateEntities } from '../../actions/entities' 
+import { createUser, updateUser } from '../../api/users/repository'
 
 export const listenSession = async data => {
   try {
@@ -41,12 +42,18 @@ export const stopListenSession = async data => {
 export const createSession = async data => {
   try {
     const code = generateCode()
-    const user = await getFirebaseUser()
+    const user = await createUser({
+      name: data.name,
+      avatar: data.avatar
+    })
     const session = await create({
-      ...data,
       code,
       createdAt: timestamp,
       createdBy: get('uid', user)
+    })
+    await joinSession({
+      id: session.id,
+      user
     })
     return session
   } catch (e) {
@@ -75,17 +82,45 @@ export const findSessionByCode = async code => {
   }
 }
 
-export const join = async data => {
+export const joinSession = async data => {
   try {
     const id = get('id', data)
-    const user = await getFirebaseUser()
+    const user = get('user', data)
     const session = await fetch({ id })
-    console.log('debug session', session)
+    await updateUsers({
+      ...user,
+      sessionId: id
+    })
+    await updateUser({
+      ...user,
+      sessionId: session.id
+    })
+    return session
   } catch (e) {
     dispatch({
       type: SESSIONS_CREATE_ERROR,
       payload: {
         msg: 'Impossible de rejoindre la session.',
+        e
+      }
+    })
+  }
+}
+
+export const leaveSession = async data => {
+  try {
+    const id = get('id', data)
+    const user = await getFirebaseUser()
+    const users = await leaveUsers({
+      id,
+      userId: user.id
+    })
+    return users
+  } catch (e) {
+    dispatch({
+      type: SESSIONS_CREATE_ERROR,
+      payload: {
+        msg: 'Impossible de quitter la session.',
         e
       }
     })

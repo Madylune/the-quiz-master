@@ -1,6 +1,6 @@
 import { ENTITIES_UPDATE, ENTITIES_REMOVE } from '../actions/entities'
-import getOr from 'lodash/fp/getOr'
-import omit from 'lodash/fp/omit'
+import get from 'lodash/get'
+import omit from 'lodash/omit'
 
 const entities = (state = {}, { type, payload }) => {
   switch (type) {
@@ -10,12 +10,13 @@ const entities = (state = {}, { type, payload }) => {
           return {
             ...memo,
             [entityName]: {
-              ...getOr({}, [entityName], state),
+              ...get(state, [entityName], {}),
               ...Object.entries(entities).reduce(
                 (mem, [id, entity]) => ({
                   ...mem,
                   [id]: entity
-                })
+                }),
+                {}
               )
             }
           }
@@ -29,7 +30,7 @@ const entities = (state = {}, { type, payload }) => {
     }
 
     case ENTITIES_REMOVE:
-      return omit(payload.path, state)
+      return omit(state, payload.path)
     default:
       return state
   }

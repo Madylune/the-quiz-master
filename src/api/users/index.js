@@ -3,6 +3,7 @@ import {
   getFirebaseUser,
   listenFirebaseNode,
   updateFirebaseNode,
+  fetchFirebaseNode,
   signInWithEmailAndPassword,
 } from '../firebase'
 import { userEntity } from './spec'
@@ -24,6 +25,14 @@ export const listen = async cb => {
       onData : cb
     })
   )
+}
+
+export const fetch = async data => {
+  const id = get('id', data)
+  const user = await fetchFirebaseNode({
+    path: `${PATH}/${id}`
+  })
+  return user
 }
 
 export const update = async (data, query) => {

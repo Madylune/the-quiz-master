@@ -4,12 +4,12 @@ import { timestamp } from '../firebase'
 import cleanSpec from '../spec'
 import get from 'lodash/fp/get'
 
-export const userEntity = ({ data, user }) =>
+export const userEntity = ({ data, user }) => 
   cleanSpec({
     ...pick(data, [
       'name',
-      'isOnline',
-      'avatar'
+      'avatar',
+      'sessionId'
     ]),
     id: get('uid', user),
     createdAt: getOr(timestamp, 'createdAt', data),

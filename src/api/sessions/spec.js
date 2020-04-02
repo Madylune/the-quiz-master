@@ -8,6 +8,7 @@ export const sessionEntity = ({ data, user }) =>
     ...pick(data, [
       'id',
       'code',
+      'users',
       'questions',
       'currentQuestion',
       'startedAt',

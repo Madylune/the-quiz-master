@@ -1,17 +1,11 @@
 import { USERS_SET_CURRENT_USER } from '../actions/users'
 
-const initialState = {
-  currentUser: null
-}
-
-const reducer = (state = initialState, { type, payload }) => {
+const reducer = (state = [], { type, payload }) => {
   switch (type) {
     case USERS_SET_CURRENT_USER:
       return {
         ...state,
-        currentUser: {
-          ...payload
-        }
+        ...payload
       }
     default:
       return state

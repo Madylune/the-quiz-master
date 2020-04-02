@@ -1,21 +1,25 @@
 import { getFirebaseUser, signInAnonymously, listenFirebaseNode, signOut } from '../firebase'
-import { update, login, listen } from './index'
+import { update, login, listen, fetch } from './index'
 import { dispatch } from '../../store'
-import { normalize } from 'normalizr'
+import { normalize } from '../../schema'
 import { updateEntities } from '../../actions/entities'
 import { USERS_SET_CURRENT_USER } from '../../actions/users'
+
+export const listenUser = async () => {
+  await listen(user => {
+    const { entities: { users } } = normalize({ user })
+    dispatch(updateEntities({ users }))
+  })
+}
 
 export const fetchUser = async () => {
   try {
     const currentFirebaseUser = await getFirebaseUser()
-    const firebaseUser = currentFirebaseUser 
-      ? currentFirebaseUser
-      : await signInAnonymously().then(user => ({
-        ...user
-      }))
-    await updateUser(firebaseUser)
-    await listenFirebaseNode()
-    return firebaseUser
+    const firebaseUser = currentFirebaseUser || await signInAnonymously()
+    const user = await fetch({ id: firebaseUser.uid })
+    await updateUser(user)
+    await listenUser()
+    return user
   } catch (e) {
     dispatch({
       type: 'error.fetch.user',
@@ -72,13 +76,6 @@ export const createUser = async data => {
   }))
   await updateUser(currentUser)
   return currentUser
-}
-
-export const listenUser = async user => {
-  await listen(user => {
-    const { entities } = normalize({ user })
-    dispatch(updateEntities({ entities }))
-  })
 }
 
 export const updateUser = async (data, cb) => {

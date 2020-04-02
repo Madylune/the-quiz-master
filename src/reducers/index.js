@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux'
 import entities from './entities'
-import users from './users'
+import currentUser from './currentUser'
 
 const reducers = combineReducers({
   entities,
-  users
+  currentUser
 })
 
 export default reducers

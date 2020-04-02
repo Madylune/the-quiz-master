@@ -9,6 +9,8 @@ import {
   fetchFirebaseNode,
   getFirebaseUser,
   addFirebaseNode,
+  updateFirebaseNode,
+  removeFirebaseNode,
 } from '../firebase'
 import { sessionEntity } from './spec'
 import { userEntity } from '../users/spec'
@@ -70,3 +72,34 @@ export const create = async data => {
   return session
 }
 
+export const update = async data => {
+  const id = get('id', data)
+  const user = await getFirebaseUser()
+  const entity = sessionEntity({ data, user })
+  const session = await updateFirebaseNode({
+    path: `${PATH}/${id}`,
+    entity
+  })
+  return session
+}
+
+export const updateUsers = async (data, query) => {
+  const sessionId = get('sessionId', data)
+  const user = await getFirebaseUser()
+  const entity = userEntity({ data, user })
+  const updatedUser = await updateFirebaseNode({
+    path: `${PATH}/${sessionId}/users/${user.uid}`,
+    entity,
+    query
+  })
+  return updatedUser
+}
+
+export const leaveUsers = async data => {
+  const id = get('id', data)
+  const user = await getFirebaseUser()
+  const users = await removeFirebaseNode({
+    path: `${PATH}/${id}/users/${user.uid}`
+  })
+  return users
+}
