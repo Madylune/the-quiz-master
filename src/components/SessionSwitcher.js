@@ -7,6 +7,7 @@ import { getSessionByCode } from '../selectors/sessions'
 import { getCurrentUser, getUserById } from '../selectors/users'
 import Lobby from '../screens/Lobby'
 import JoinSession from '../screens/JoinSession'
+import PlaySession from '../screens/PlaySession'
 
 class SessionSwitcher extends Component {
 
@@ -24,7 +25,7 @@ class SessionSwitcher extends Component {
     const { session, user } = this.props
     switch (true) {
       case has('startedAt', session):
-        return <div>Session en cours</div>
+        return <PlaySession session={session} />
       case get('sessionId', user) === get('id', session):
         return <Lobby session={session} />
       default:

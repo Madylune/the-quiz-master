@@ -23,17 +23,19 @@ const StyledFormControl = styled(FormControl)`
 `
 
 const Settings = ({ isDisabled, session, users }) => {
-  const [ round, setRound ] = useState(2)
-  const onRoundChange = e => setRound(e.target.value)
+  const [ rounds, setRounds ] = useState(2)
+  const onRoundsChange = e => setRounds(e.target.value)
 
   const [ time, setTime ] = useState(5)
   const onTimeChange = e => setTime(e.target.value)
 
-  const onStartGame = async () => 
+  const onStartGame = async () => {
     await startSession({ 
-      id: session.id
+      id: session.id,
+      rounds,
+      users
     })
-  
+  }
 
   return (
     <StyledSettings>
@@ -43,8 +45,8 @@ const Settings = ({ isDisabled, session, users }) => {
         <Input 
           type="number" 
           inputProps={{ min: "2", max: "10", step: "1" }}
-          value={round} 
-          onChange={onRoundChange}
+          value={rounds} 
+          onChange={onRoundsChange}
           disabled={isDisabled}
         />
       </StyledFormControl>

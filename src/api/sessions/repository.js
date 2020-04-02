@@ -2,11 +2,14 @@ import { dispatch } from '../../store'
 import { SESSIONS_CREATE_ERROR } from '../../actions/sessions'
 import { generateCode } from '../../utils/sessions'
 import { getFirebaseUser, timestamp } from '../firebase'
-import { listen, stopListen, create, fetch, fetchByCode, updateUsers, leaveUsers } from './index'
+import { listen, stopListen, create, fetch, fetchByCode, updateUsers, leaveUsers, update } from './index'
 import get from 'lodash/fp/get'
 import { normalize } from '../../schema'
 import { updateEntities } from '../../actions/entities' 
 import { createUser, updateUser } from '../../api/users/repository'
+import { sessionEntity } from './spec'
+import { setQuizMaster } from '../../utils/users'
+import { sampleQuestions } from '../../utils/questions'
 
 export const listenSession = async data => {
   try {
@@ -128,5 +131,28 @@ export const leaveSession = async data => {
 }
 
 export const startSession = async data => {
-  
+  try {
+    const user = await getFirebaseUser()
+    const entity = sessionEntity({
+      data: {
+        ...data,
+        startedAt: timestamp,
+        questions: sampleQuestions(),
+        currentQuestion: 1,
+        currentQuestionAt: timestamp,
+        currentQuizMaster: setQuizMaster(data.users)
+      },
+      user
+    })
+    const session = await update(entity)
+    return session
+  } catch (e) {
+    dispatch({
+      type: SESSIONS_CREATE_ERROR,
+      payload: {
+        msg: 'Impossible de démarrer la session.',
+        e
+      }
+    })
+  }
 }

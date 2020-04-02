@@ -9,8 +9,11 @@ export const sessionEntity = ({ data, user }) =>
       'id',
       'code',
       'users',
+      'rounds',
       'questions',
       'currentQuestion',
+      'currentQuestionAt',
+      'currentQuizMaster',
       'startedAt',
       'createdAt',
       'createdBy'
