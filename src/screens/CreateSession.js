@@ -19,6 +19,7 @@ const StyledCreateSession = styled.div`
   height: 100%;
   top: 0;
   left: 0;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 ` 
 
 const StyledContent = styled.div`

@@ -1,12 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
-import { Button } from '@material-ui/core'
+import { Typography } from '@material-ui/core'
 import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
 import size from 'lodash/fp/size'
 import Header from '../components/Header'
-import { getUsersByIds } from '../selectors/users'
+import Settings from '../components/Settings'
+import { getUsersByIds, getCurrentUser } from '../selectors/users'
+import { isSessionCreator } from '../utils/users'
 
 const StyledLobby = styled.div`
   margin: 0;
@@ -21,6 +23,7 @@ const StyledLobby = styled.div`
   color: #1d1c1c;
   font-size: 25px;
   text-align: center;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 `
 
 const StyledCode = styled.div`
@@ -46,6 +49,13 @@ const StyledCard = styled.div`
   background-color: #ffffff;
   width: 30%;
   min-height: 500px;
+  border-radius: 20px;
+`
+
+const StyledPlayers = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 `
 
 const StyledChar = styled.div`
@@ -59,8 +69,14 @@ const StyledChar = styled.div`
   }
 `
 
-const Lobby = ({ users }) => {
+const StyledSpan = styled.span`
+  font-size: 12px;
+`
+
+const Lobby = ({ users, currentUser, session }) => {
   const url = get('location.href', window)
+  const sessionCreator = isSessionCreator(session, currentUser.id)
+
   return (
     <StyledLobby>
     <Header />
@@ -69,21 +85,19 @@ const Lobby = ({ users }) => {
     </StyledCode>
 
     <StyledContent>
-      <StyledCard>
-        Paramètres <br/>
-        <Button color="primary" variant="contained" disabled={size(users) <= 1}>
-          Démarrer la partie
-        </Button>
-      </StyledCard>
+      <Settings isDisabled={size(users) <= 1 || !sessionCreator} />
 
       <StyledCard>
-        Joueurs connectés: <br/>
-        {map(user => 
-          <StyledChar key={get('id', user)}>
-            <img src={require(`../assets/characters/${get('avatar', user)}.png`)} alt="Personnage" />
-            {get('name', user)}
-        </StyledChar>  
-        , users)}
+      <Typography variant="h5">Joueurs connectés</Typography>
+        <StyledPlayers>
+          {map(user => 
+            <StyledChar key={get('id', user)}>
+              <img src={require(`../assets/characters/${get('avatar', user)}.png`)} alt="Personnage" />
+              {get('name', user)}
+              {get('id', currentUser) === get('id', user) && <StyledSpan>(Moi)</StyledSpan>}
+          </StyledChar>  
+          , users)}
+        </StyledPlayers>
       </StyledCard>
     </StyledContent>
   </StyledLobby>
@@ -91,7 +105,8 @@ const Lobby = ({ users }) => {
 }
 
 const mapStateToProps = (state, { session }) => ({
-  users: getUsersByIds(state, get('users', session))
+  users: getUsersByIds(state, get('users', session)),
+  currentUser: getCurrentUser(state)
 })
 
 export default connect(mapStateToProps)(Lobby)
