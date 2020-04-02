@@ -11,7 +11,8 @@ import { getUsersByIds } from '../selectors/users'
 const StyledLobby = styled.div`
   margin: 0;
   padding: 0;
-  background-color: #9edbff;
+  background-image: url(${require('../assets/img/bg.jpg')});
+  background-size: cover;
   position: fixed;
   width: 100%;
   height: 100%;

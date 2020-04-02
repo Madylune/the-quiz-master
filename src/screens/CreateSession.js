@@ -1,17 +1,19 @@
 import React, { useState } from 'react'
 import { withRouter } from 'react-router'
 import styled from 'styled-components'
-import { TextField, Button } from '@material-ui/core'
+import { TextField, Button, Typography } from '@material-ui/core'
 import times from 'lodash/fp/times'
 import map from 'lodash/fp/map'
 import { createSession } from '../api/sessions/repository'
 import { getPath } from '../routes'
 import Header from '../components/Header'
+import Rules from '../components/Rules'
 
 const StyledCreateSession = styled.div`
   margin: 0;
   padding: 0;
-  background-color: #9edbff;
+  background-image: url(${require('../assets/img/bg.jpg')});
+  background-size: cover;
   position: fixed;
   width: 100%;
   height: 100%;
@@ -19,15 +21,22 @@ const StyledCreateSession = styled.div`
   left: 0;
 ` 
 
+const StyledContent = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-start;
+`
+
 const StyledCard = styled.div`
-  margin: auto;
+  margin: 10px;
+  padding: 10px;
   background-color: #ffffff;
-  height: 300px;
-  width: 600px;
+  height: 350px;
+  width: 500px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
   border-radius: 20px;
 `
 
@@ -38,7 +47,7 @@ const StyledTextField = styled(TextField)`
 `
 
 const StyledSlider = styled.div`
-  overflow: scroll;
+  overflow-x: scroll;
   display: flex;
   width: 300px;
 `
@@ -74,23 +83,29 @@ const CreateSession = ({ history }) => {
   return (
     <StyledCreateSession>
       <Header />
-      <StyledCard>
-        <StyledTextField id="outlined-basic" label="Ton nom" variant="outlined" onChange={onChangeName} />
-        <StyledSlider>
-          {map(char =>
-            <StyledChar 
-              key={char} 
-              isSelected={avatar === char} 
-              onClick={() => onSelectAvatar(char)}
-            >
-              <img src={require(`../assets/characters/${char}.png`)} alt="Personnage" />
-            </StyledChar>
-          , characters)}
-        </StyledSlider>
-        <Button color="primary" variant="contained" onClick={onCreateSession} disabled={!name || !avatar}>
-          Créer une partie
-        </Button>
-      </StyledCard>
+      <StyledContent>
+        <StyledCard>
+        <Typography variant="h5">
+          Créé ton avatar
+        </Typography>
+          <StyledTextField id="outlined-basic" label="Ton nom" variant="outlined" onChange={onChangeName} />
+          <StyledSlider>
+            {map(char =>
+              <StyledChar 
+                key={char} 
+                isSelected={avatar === char} 
+                onClick={() => onSelectAvatar(char)}
+              >
+                <img src={require(`../assets/characters/${char}.png`)} alt="Personnage" />
+              </StyledChar>
+            , characters)}
+          </StyledSlider>
+          <Button color="primary" variant="contained" onClick={onCreateSession} disabled={!name || !avatar}>
+            Créer une partie
+          </Button>
+        </StyledCard>
+        <Rules />
+      </StyledContent>
     </StyledCreateSession>
   )
 }
