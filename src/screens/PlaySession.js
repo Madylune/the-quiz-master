@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
 import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
 import find from 'lodash/fp/find'
+import concat from 'lodash/fp/concat'
 import { getUsersByIds, getCurrentUser } from '../selectors/users'
+import { listenQuestion } from '../api/questions/repository'
 import Desk from '../components/play/Desk'
 import Avatar from '../components/Avatar'
 import Crown from '../components/Crown'
@@ -53,41 +55,53 @@ const StyledCards = styled.div`
   display: flex;
 `
 
-const PlaySession = ({ session, users, currentUser }) => {
-  const quizMaster = find(user => user.id === get('currentQuizMaster', session), users)
-  const isQuizMaster = currentUser.id === quizMaster.id
-  return (
-    <StyledPlaySession>
-      <StyledContent>
-        <StyledUsers>
-          <StyledRounds>
-            Round: {get('currentQuestion', session)} / {get('rounds', session)}
-          </StyledRounds>
-          {map(user =>
-            <StyledUser key={get('id', user)}>
-              <Avatar height={45} avatar={get('avatar', user)} />
-              <span className="Username">{get('name', user)}</span>
-              {user.id === quizMaster.id && (
-                <Crown height={20} />
-              )}
-              <StyledCards>
-                <Card />
-                <Card />
-                <Card />
-              </StyledCards>
-            </StyledUser>
-          , users)}
-        </StyledUsers>
+class PlaySession extends Component {
+  componentDidMount = async () =>{
+    const { session } = this.props
+    await listenQuestion({
+      ids: [session.currentQuestion]
+    })
+  }
 
-        <Desk 
-          isQuizMaster={isQuizMaster}
-          quizMaster={quizMaster}
-          session={session}
-          users={users}
-        />
-      </StyledContent>
-    </StyledPlaySession>
-  )
+  render() {
+    const { session, users, currentUser } = this.props
+    const quizMaster = find(user => user.id === get('quizMaster', session), users)
+    const isQuizMaster = currentUser.id === quizMaster.id
+    const players = concat(quizMaster, get('players', session))
+
+    return (
+      <StyledPlaySession>
+        <StyledContent>
+          <StyledUsers>
+            <StyledRounds>
+              Round: {get('currentRound', session)} / {get('rounds', session)}
+            </StyledRounds>
+            {map(player =>
+              <StyledUser key={get('id', player)}>
+                <Avatar height={45} avatar={get('avatar', player)} />
+                <span className="Username">{get('name', player)}</span>
+                {player.id === quizMaster.id && (
+                  <Crown height={20} />
+                )}
+                <StyledCards>
+                  <Card />
+                  <Card />
+                  <Card />
+                </StyledCards>
+              </StyledUser>
+            , players)}
+          </StyledUsers>
+
+          <Desk 
+            isQuizMaster={isQuizMaster}
+            quizMaster={quizMaster}
+            session={session}
+            users={users}
+          />
+        </StyledContent>
+      </StyledPlaySession>
+    )
+  }
 }
 
 const mapStateToProps = (state, { session }) => ({

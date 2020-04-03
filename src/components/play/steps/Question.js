@@ -8,9 +8,7 @@ const StyledQuestionCard = styled.div`
   background-color: #ffffff;
   border-radius: 20px;
   margin-bottom: 20px;
-  padding: 10px 20px;
-  height: 50px;
-  line-height: 50px;
+  padding: 20px;
   text-align: center;
   font-size: 17px;
   cursor: pointer;

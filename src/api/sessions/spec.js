@@ -8,13 +8,14 @@ export const sessionEntity = ({ data, user }) =>
     ...pick(data, [
       'id',
       'code',
-      'users',
-      'rounds',
-      'questions',
-      'currentQuestion',
-      'currentQuestionAt',
-      'currentQuestionTitle',
-      'currentQuizMaster',
+      'users', // Tous les joueurs 
+      'players', // Les joueurs sans le quiz Master
+      'rounds', // Nombre total de rounds
+      'questions', // Les 3 questions par round
+      'currentRound', // N° du round en cours
+      'currentRoundAt', // Début du round
+      'currentQuestion', // Titre de la question en cours
+      'quizMaster',
       'startedAt',
       'createdAt',
       'createdBy'

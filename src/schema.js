@@ -6,29 +6,6 @@ import {
 
 const user = new schema.Entity('users')
 const userValues = new schema.Array(user)
-
-const question = new schema.Entity(
-  'questions',
-  {},
-  {
-    processStrategy: entity => ({
-      ...entity
-    })
-  }
-)
-const questionValues = new schema.Array(question)
-
-const card = new schema.Entity(
-  'cards',
-  {},
-  {
-    processStrategy: entity => ({
-      ...entity
-    })
-  }
-)
-const cardValues = new schema.Array(card)
-
 const session = new schema.Entity(
   'sessions',
   {},
@@ -38,18 +15,25 @@ const session = new schema.Entity(
     })
   }
 )
+const question = new schema.Entity('questions')
+const questionValues = new schema.Array(question)
+const answer = new schema.Entity('answers')
+const answerValues = new schema.Array(answer)
+
+question.define({
+  answers: answerValues,
+})
 
 session.define({
   questions: questionValues,
-  cards: cardValues,
   users: userValues
 })
 
 const fullSchema = {
   user,
+  session,
   question,
-  card,
-  session
+  answer
 }
 
 export const normalize = data => normalizer(data, fullSchema)

@@ -10,7 +10,6 @@ import JoinSession from '../screens/JoinSession'
 import PlaySession from '../screens/PlaySession'
 
 class SessionSwitcher extends Component {
-
   componentDidMount = async () => {
     const { match } = this.props
     const code = get('params.code', match)

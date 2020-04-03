@@ -1,15 +1,18 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import has from 'lodash/fp/has'
+import get from 'lodash/fp/get'
 import Question from './Question'
 import Answers from './Answers'
 import Vote from './Vote'
+import { getQuestionById } from '../../../selectors/questions'
 
-const Step = ({ isQuizMaster, session, userTurn }) => {
+const Step = ({ isQuizMaster, session, userTurn, question }) => {
   switch (true) {
-    case isQuizMaster && !has('currentQuestionTitle', session):
+    case isQuizMaster && !has('currentQuestion', session):
       return <Question session={session} />
-    case has('currentQuestionTitle', session):
-      return <Answers session={session} userTurn={userTurn} />
+    case has('currentQuestion', session):
+      return <Answers question={question} userTurn={userTurn} />
     case '':
       return <Vote session={session} />
     default:
@@ -17,4 +20,8 @@ const Step = ({ isQuizMaster, session, userTurn }) => {
   }
 }
 
-export default Step
+const mapStateToProps = (state, { session }) => ({
+  question: getQuestionById(state, get('currentQuestion', session))
+})
+
+export default connect(mapStateToProps)(Step)

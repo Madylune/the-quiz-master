@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
 import get from 'lodash/fp/get'
 import { getCurrentUser } from '../../../selectors/users'
 import { Typography, TextField } from '@material-ui/core'
+import { createAnswer, listenAnswers } from '../../../api/answers/repository'
 
 const StyledAnswers = styled.div`
   text-align: center;
@@ -36,35 +37,55 @@ const StyledInput = styled(TextField)`
   }
 `
 
-const Answers = ({ session, userTurn, currentUser }) => {
-  const [ answer, setAnswer ] = useState(undefined)
-  const onAnswerChange = e => setAnswer(e.target.value)
+class Answers extends Component {
+  state = {
+    value: undefined
+  }
 
-  const onKeyPress = e => {
-    if (get('key', e) === 'Enter') {
-      console.log('debug answer', answer)
+  componentDidUpdate = async (prevProps) => {
+    const { question } = this.props
+    if (prevProps.question !== question) {
+      await listenAnswers({
+        ids: [question.answers]
+      })
     }
   }
-  return (
-    <StyledAnswers>
-      <StyledQuestion>
-        <Typography variant="h5">
-          {session.currentQuestionTitle}
-        </Typography>
-      </StyledQuestion>
-      {userTurn.id === currentUser.id && (
-        <StyledInput 
-          placeholder="Ta réponse" 
-          onChange={onAnswerChange}
-          value={answer}
-          onKeyPress={onKeyPress}
-        />
-      )}
-    </StyledAnswers>
-  )
+
+  onAnswerChange = e => this.setState({ answer: e.target.value })
+
+  onKeyPress = async e => {
+    const { question } = this.props
+    const { value } = this.state
+    if (get('key', e) === 'Enter') {
+      await createAnswer({
+        questionId: get('title', question),
+        value
+      })
+    }
+  }
+  
+  render() {
+    const { userTurn, currentUser, question } = this.props
+    return (
+      <StyledAnswers>
+        <StyledQuestion>
+          <Typography variant="h5">
+            {get('title', question)}
+          </Typography>
+        </StyledQuestion>
+        {userTurn.id === currentUser.id && (
+          <StyledInput 
+            placeholder="Ta réponse" 
+            onChange={this.onAnswerChange}
+            onKeyPress={this.onKeyPress}
+          />
+        )}
+      </StyledAnswers>
+    )
+  }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, { question }) => ({
   currentUser: getCurrentUser(state)
 })
 

@@ -15,16 +15,13 @@ const StyledInstruction = styled.div`
   justify-content: center;
 `
 
-const Instructions = ({ data }) => {
-  return (
-    <StyledInstruction>
-      <Avatar height={60} avatar={get('user', data)} margin="5px 10px" />
-      <Typography variant="h6">
-        {get('title', data)}
-      </Typography>
-    </StyledInstruction>
-  )
-}
+const Instructions = ({ data }) => 
+  <StyledInstruction>
+    {get('user', data) && <Avatar height={60} avatar={get('user', data)} margin="5px 10px" />}
+    <Typography variant="h6">
+      {get('title', data)}
+    </Typography>
+  </StyledInstruction>
 
 const StyledDesk = styled.div`
   position: relative;
@@ -38,12 +35,12 @@ const StyledDesk = styled.div`
 const Desk = ({ quizMaster, isQuizMaster, session, users }) => {
   const getInstructionsContent = () => {
     switch (true) {
-      case isQuizMaster && !has('currentQuestionTitle', session):
+      case !has('currentQuestion', session):
         return {
           user: quizMaster.avatar,
-          title: 'est en train de choisir une question'
+          title: `${quizMaster.name} est en train de choisir une question`
         }
-      case has('currentQuestionTitle', session):
+      case has('currentQuestion', session):
         return {
           user: users[1].avatar,
           title: `Au tour de ${users[1].name} de répondre`

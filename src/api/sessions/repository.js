@@ -7,10 +7,11 @@ import get from 'lodash/fp/get'
 import { normalize } from '../../schema'
 import { updateEntities } from '../../actions/entities' 
 import { createUser, updateUser } from '../../api/users/repository'
+import { createQuestion } from '../../api/questions/repository'
 import { sessionEntity } from './spec'
 import { setQuizMaster } from '../../utils/users'
 import { sampleQuestions } from '../../utils/questions'
-import { shuffleUsers } from '../../utils/users'
+import { getPlayers } from '../../utils/users'
 
 export const listenSession = async data => {
   try {
@@ -134,15 +135,16 @@ export const leaveSession = async data => {
 export const startSession = async data => {
   try {
     const user = await getFirebaseUser()
+    const quizMaster = setQuizMaster(data.users)
     const entity = sessionEntity({
       data: {
         ...data,
         startedAt: timestamp,
         questions: sampleQuestions(),
-        currentQuestion: 1,
-        currentQuestionAt: timestamp,
-        currentQuizMaster: setQuizMaster(data.users),
-        users: shuffleUsers(data.users)
+        currentRound: 1,
+        currentRoundAt: timestamp,
+        quizMaster,
+        players: getPlayers(quizMaster, data.users)
       },
       user
     })
@@ -162,10 +164,14 @@ export const startSession = async data => {
 export const updateSession = async data => {
   try {
     const user = await getFirebaseUser()
+    const question = await createQuestion({
+      sessionId: data.id,
+      title: data.questionTitle
+    })
     const entity = sessionEntity({
       data: {
         ...data,
-        currentQuestionTitle: data.questionTitle
+        currentQuestion: question.id
       },
       user
     })

@@ -9,7 +9,9 @@ export const userEntity = ({ data, user }) =>
     ...pick(data, [
       'name',
       'avatar',
-      'sessionId'
+      'sessionId',
+      'cards',
+      'order'
     ]),
     id: get('uid', user),
     createdAt: getOr(timestamp, 'createdAt', data),
