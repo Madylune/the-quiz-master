@@ -10,6 +10,7 @@ import Settings from '../components/Settings'
 import { getUsersByIds, getCurrentUser } from '../selectors/users'
 import { isSessionCreator } from '../utils/users'
 import { BREAKPOINTS } from '../theme' 
+import Avatar from '../components/Avatar'
 
 const StyledLobby = styled.div`
   margin: 0;
@@ -37,7 +38,7 @@ const StyledUrl = styled.span`
   background-color: #ffffff;
   padding: 10px;
   border-radius: 5px;
-  width: 30%;
+  width: 45%;
   
   @media (max-width: ${BREAKPOINTS.sm}) {
     width: 90%;
@@ -78,10 +79,6 @@ const StyledChar = styled.div`
   flex-direction: column;
   align-items: center;
   font-size: 18px;
-  img {
-    height: 80px;
-    margin: 10px;
-  }
 `
 
 const StyledSpan = styled.span`
@@ -110,7 +107,7 @@ const Lobby = ({ users, currentUser, session }) => {
         <StyledPlayers>
           {map(user => 
             <StyledChar key={get('id', user)}>
-              <img src={require(`../assets/characters/${get('avatar', user)}.png`)} alt="Personnage" />
+              <Avatar height={80} avatar={get('avatar',user)} margin="10px" />
               {get('name', user)}
               {get('id', currentUser) === get('id', user) && <StyledSpan>(Moi)</StyledSpan>}
           </StyledChar>  

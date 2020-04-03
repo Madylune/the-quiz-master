@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Typography } from '@material-ui/core'
 import { BREAKPOINTS } from '../theme' 
+import Crown from './Crown'
 
 const StyledHeader = styled.div`
   text-transform: uppercase;
@@ -20,9 +21,7 @@ const StyledTitle = styled(Typography)`
   }
 `
 
-const StyledCrown = styled.img`
-  height: 50px;
-  margin: 0 5px;
+const StyledCrown = styled(Crown)`
   @media (max-width: ${BREAKPOINTS.sm}) {
     height: 30px;
   }
@@ -31,9 +30,9 @@ const StyledCrown = styled.img`
 const Header = () => 
   <StyledHeader>
     <StyledTitle variant="h4">
-      <StyledCrown src={require('../assets/img/crown.png')} alt="Couronne" />
+      <StyledCrown margin="0 5px" height={50} />
       The Quiz Master
-      <StyledCrown src={require('../assets/img/crown.png')} alt="Couronne" />
+      <StyledCrown margin="0 5px" height={50} />
     </StyledTitle>
   </StyledHeader>
 

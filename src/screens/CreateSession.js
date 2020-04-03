@@ -9,6 +9,7 @@ import { getPath } from '../routes'
 import Header from '../components/Header'
 import Rules from '../components/Rules'
 import { BREAKPOINTS } from '../theme' 
+import Avatar from '../components/Avatar'
 
 const StyledCreateSession = styled.div`
   margin: 0;
@@ -80,10 +81,6 @@ const StyledChar = styled.div`
   cursor: pointer;
   border: ${(props => props.isSelected ? '2px solid #9edbff': undefined)};
   border-radius: 20px;
-  img {
-    height: 80px;
-    margin: 10px;
-  }
 `
 
 const CreateSession = ({ history }) => {
@@ -120,7 +117,7 @@ const CreateSession = ({ history }) => {
                 isSelected={avatar === char} 
                 onClick={() => onSelectAvatar(char)}
               >
-                <img src={require(`../assets/characters/${char}.png`)} alt="Personnage" />
+                <Avatar height={80} avatar={char} margin="10px" />
               </StyledChar>
             , characters)}
           </StyledSlider>

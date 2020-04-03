@@ -5,7 +5,10 @@ import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
 import find from 'lodash/fp/find'
 import { getUsersByIds, getCurrentUser } from '../selectors/users'
-import { Typography } from '@material-ui/core'
+import Desk from '../components/play/Desk'
+import Avatar from '../components/Avatar'
+import Crown from '../components/Crown'
+import Card from '../components/Card'
 
 const StyledPlaySession = styled.div`
   margin: 0;
@@ -20,42 +23,60 @@ const StyledPlaySession = styled.div`
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 `
 
-const QuestionCard = styled.div`
+const StyledContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
+const StyledUsers = styled.div`
+  border-radius: 10px;
   background-color: #ffffff;
-  border-radius: 20px;
-  margin: 20px;
-  height: 50px;
-  width: 300px;
+  width: 20%;
+  height: 100vh;
   margin: 10px;
-  line-height: 50px;
-  text-align: center;
-  cursor: pointer;
-  &:hover {
-    background-color: #e4eeeb;
+`
+
+const StyledUser = styled.div`
+  margin: 10px 5px;
+  .Username{
+    margin: 5px;
+    font-size: 18px;
   }
+`
+
+const StyledCards = styled.div`
+  display: flex;
 `
 
 const PlaySession = ({ session, users, currentUser }) => {
   const quizMaster = find(user => user.id === get('currentQuizMaster', session), users)
+  const isQuizMaster = currentUser.id === quizMaster.id
   return (
     <StyledPlaySession>
-      <Typography variant="h4">
-        Le Quiz Master pour ce tour est: {get('name', quizMaster)}
-      </Typography>
-      {currentUser.id === quizMaster.id ? (
-        <>
-        <Typography variant="body1">
-          {get('name', quizMaster)}, choisis une question:
-        </Typography>
-        {map(question => 
-          <QuestionCard key={question}>{question}</QuestionCard>
-        ,get('questions', session))}
-        </>
-      ) : (
-      <Typography variant="body1">
-        Le Quiz Master est en train de choisir une question
-      </Typography>
-      )}
+      <StyledContent>
+        <StyledUsers>
+          {map(user =>
+            <StyledUser>
+              <Avatar height={45} avatar={get('avatar', user)} />
+              <span className="Username">{get('name', user)}</span>
+              {user.id === quizMaster.id && (
+                <Crown height={20} />
+              )}
+              <StyledCards>
+                <Card />
+                <Card />
+                <Card />
+              </StyledCards>
+            </StyledUser>
+          , users)}
+        </StyledUsers>
+
+        <Desk 
+          isQuizMaster={isQuizMaster}
+          quizMaster={quizMaster}
+          session={session}
+        />
+      </StyledContent>
     </StyledPlaySession>
   )
 }

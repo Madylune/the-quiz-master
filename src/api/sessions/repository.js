@@ -10,6 +10,7 @@ import { createUser, updateUser } from '../../api/users/repository'
 import { sessionEntity } from './spec'
 import { setQuizMaster } from '../../utils/users'
 import { sampleQuestions } from '../../utils/questions'
+import { shuffleUsers } from '../../utils/users'
 
 export const listenSession = async data => {
   try {
@@ -140,7 +141,8 @@ export const startSession = async data => {
         questions: sampleQuestions(),
         currentQuestion: 1,
         currentQuestionAt: timestamp,
-        currentQuizMaster: setQuizMaster(data.users)
+        currentQuizMaster: setQuizMaster(data.users),
+        users: shuffleUsers(data.users)
       },
       user
     })
