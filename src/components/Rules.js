@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Typography } from '@material-ui/core'
+import { BREAKPOINTS } from '../theme' 
 
 const StyledRules = styled.div`
   margin: 10px;
@@ -12,6 +13,12 @@ const StyledRules = styled.div`
   align-items: center;
   justify-content: space-between;
   border-radius: 20px;
+
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    margin: 0;
+    padding: 10px;
+    width: 90%;
+  }
 `
 
 const StyledTypography = styled(Typography)`

@@ -9,6 +9,7 @@ import Header from '../components/Header'
 import Settings from '../components/Settings'
 import { getUsersByIds, getCurrentUser } from '../selectors/users'
 import { isSessionCreator } from '../utils/users'
+import { BREAKPOINTS } from '../theme' 
 
 const StyledLobby = styled.div`
   margin: 0;
@@ -37,11 +38,20 @@ const StyledUrl = styled.span`
   padding: 10px;
   border-radius: 5px;
   width: 30%;
+  
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    width: 90%;
+  }
 `
 
 const StyledContent = styled.div`
   display: flex;
   justify-content: center;
+
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    flex-direction: column;
+    align-items: center;
+  }
 `
 
 const StyledCard = styled.div`
@@ -50,6 +60,11 @@ const StyledCard = styled.div`
   width: 30%;
   min-height: 500px;
   border-radius: 20px;
+
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    width: 90%;
+    margin: 10px;
+  }
 `
 
 const StyledPlayers = styled.div`

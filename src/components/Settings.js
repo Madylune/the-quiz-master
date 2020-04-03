@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Button, Typography, Input, InputLabel, FormControl } from '@material-ui/core'
 import { startSession } from '../api/sessions/repository'
+import { BREAKPOINTS } from '../theme' 
 
 const StyledSettings = styled.div`
   margin: 30px;
@@ -14,6 +15,12 @@ const StyledSettings = styled.div`
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    width: 90%;
+    height: 200px;
+    margin: 10px;
+  }
 `
 
 const StyledFormControl = styled(FormControl)`

@@ -8,6 +8,7 @@ import { createSession } from '../api/sessions/repository'
 import { getPath } from '../routes'
 import Header from '../components/Header'
 import Rules from '../components/Rules'
+import { BREAKPOINTS } from '../theme' 
 
 const StyledCreateSession = styled.div`
   margin: 0;
@@ -20,12 +21,18 @@ const StyledCreateSession = styled.div`
   top: 0;
   left: 0;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  overflow-y: scroll;
 ` 
 
 const StyledContent = styled.div`
   display: flex;
   justify-content: space-evenly;
   align-items: flex-start;
+
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    flex-direction: column;
+    align-items: center;
+  }
 `
 
 const StyledCard = styled.div`
@@ -39,11 +46,27 @@ const StyledCard = styled.div`
   align-items: center;
   justify-content: space-between;
   border-radius: 20px;
+
+  @media (max-width: ${BREAKPOINTS.sm}) {
+    height: 300px;
+    width: 90%;
+  }
+`
+
+const StyledTitle = styled(Typography)`
+    && {
+    @media (max-width: ${BREAKPOINTS.sm}) {
+      font-size: 18px;
+    }
+  }
 `
 
 const StyledTextField = styled(TextField)`
   && {
     width: 50%;
+    @media (max-width: ${BREAKPOINTS.sm}) {
+      width: 70%;
+    }
   }
 `
 
@@ -86,9 +109,9 @@ const CreateSession = ({ history }) => {
       <Header />
       <StyledContent>
         <StyledCard>
-        <Typography variant="h5">
+        <StyledTitle variant="h5">
           Créé ton avatar
-        </Typography>
+        </StyledTitle>
           <StyledTextField id="outlined-basic" label="Ton nom" variant="outlined" onChange={onChangeName} />
           <StyledSlider>
             {map(char =>
