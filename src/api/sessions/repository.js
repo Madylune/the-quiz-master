@@ -158,3 +158,26 @@ export const startSession = async data => {
     })
   }
 }
+
+export const updateSession = async data => {
+  try {
+    const user = await getFirebaseUser()
+    const entity = sessionEntity({
+      data: {
+        ...data,
+        currentQuestionTitle: data.questionTitle
+      },
+      user
+    })
+    const session = await update(entity)
+    return session
+  } catch (e) {
+    dispatch({
+      type: SESSIONS_CREATE_ERROR,
+      payload: {
+        msg: 'Impossible de mettre à jour la session.',
+        e
+      }
+    })
+  }
+}

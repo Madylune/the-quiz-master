@@ -13,6 +13,7 @@ export const sessionEntity = ({ data, user }) =>
       'questions',
       'currentQuestion',
       'currentQuestionAt',
+      'currentQuestionTitle',
       'currentQuizMaster',
       'startedAt',
       'createdAt',

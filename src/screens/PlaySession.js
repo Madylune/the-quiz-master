@@ -28,6 +28,11 @@ const StyledContent = styled.div`
   justify-content: space-between;
 `
 
+const StyledRounds = styled.div`
+  font-weight: bold;
+  margin: 10px;
+`
+
 const StyledUsers = styled.div`
   border-radius: 10px;
   background-color: #ffffff;
@@ -55,8 +60,11 @@ const PlaySession = ({ session, users, currentUser }) => {
     <StyledPlaySession>
       <StyledContent>
         <StyledUsers>
+          <StyledRounds>
+            Round: {get('currentQuestion', session)} / {get('rounds', session)}
+          </StyledRounds>
           {map(user =>
-            <StyledUser>
+            <StyledUser key={get('id', user)}>
               <Avatar height={45} avatar={get('avatar', user)} />
               <span className="Username">{get('name', user)}</span>
               {user.id === quizMaster.id && (
@@ -75,6 +83,7 @@ const PlaySession = ({ session, users, currentUser }) => {
           isQuizMaster={isQuizMaster}
           quizMaster={quizMaster}
           session={session}
+          users={users}
         />
       </StyledContent>
     </StyledPlaySession>
