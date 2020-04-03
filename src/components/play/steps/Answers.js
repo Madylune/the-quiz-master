@@ -2,34 +2,60 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
 import get from 'lodash/fp/get'
-import { getCurrentUser } from '../../../selectors/users'
+import map from 'lodash/fp/map'
 import { Typography, TextField } from '@material-ui/core'
 import { createAnswer, listenAnswers } from '../../../api/answers/repository'
+import { getCurrentUser } from '../../../selectors/users'
+import { getAnswersByQuestionId } from '../../../selectors/answers'
 
 const StyledAnswers = styled.div`
-  text-align: center;
+  border: 2px solid white;
+  border-radius: 5px;
+  width: 85%;
+  height: 700px;
+  margin: 30px auto;
 `
 
 const StyledQuestion = styled.div`
   background-color: #ffffff;
   border-radius: 4px;
-  position: absolute;
-  top: 25%;
-  left: 20%;
   width: 60%;
-  min-height: 250px;
+  min-height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 20px auto;
 `
 
-const StyledInput = styled(TextField)`
+const StyledAnswersList = styled.div`
+  color: #ffffff;
+  padding: 30px;
+  ul {
+    height: 400px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
+  li {
+    margin: 10px 0;
+  }
+`
+
+const StyledInput = styled.div`
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  text-align: center;
+`
+
+const StyledTextField = styled(TextField)`
   && {
-    margin: 20px auto;
     background-color: #ffffff;
-    border-radius: 5px;
+    width: 85%;
+    margin: auto;
     input {
-      width: 300px;
+      width: 100%;
       height: 50px;
       padding: 10px;
       font-size: 18px;
@@ -65,7 +91,7 @@ class Answers extends Component {
   }
   
   render() {
-    const { userTurn, currentUser, question } = this.props
+    const { userTurn, currentUser, question, answers } = this.props
     return (
       <StyledAnswers>
         <StyledQuestion>
@@ -73,20 +99,31 @@ class Answers extends Component {
             {get('title', question)}
           </Typography>
         </StyledQuestion>
+        <StyledAnswersList>
+          <Typography variant="h6">Réponses:</Typography>
+          <ul>
+            {map(answer =>
+              <li key={answer.id}>{get('value', answer)}</li>
+            , answers)}
+          </ul>
+        </StyledAnswersList>
         {userTurn.id === currentUser.id && (
-          <StyledInput 
+        <StyledInput>
+          <StyledTextField
             placeholder="Ta réponse" 
             onChange={this.onAnswerChange}
             onKeyPress={this.onKeyPress}
           />
-        )}
+        </StyledInput>
+        )} 
       </StyledAnswers>
     )
   }
 }
 
 const mapStateToProps = (state, { question }) => ({
-  currentUser: getCurrentUser(state)
+  currentUser: getCurrentUser(state),
+  answers: getAnswersByQuestionId(state, get('id', question))
 })
 
 export default connect(mapStateToProps)(Answers)
