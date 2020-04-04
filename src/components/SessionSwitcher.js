@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import get from 'lodash/fp/get'
 import has from 'lodash/fp/has'
 import { listenSession, findSessionByCode } from '../api/sessions/repository'
+import { listenUsers } from '../api/users/repository'
+import { listenQuestion } from '../api/questions/repository'
 import { getSessionByCode } from '../selectors/sessions'
 import { getCurrentUser, getUserById } from '../selectors/users'
 import Lobby from '../screens/Lobby'
@@ -18,6 +20,14 @@ class SessionSwitcher extends Component {
     sessionId && listenSession({
       ids: [sessionId]
     })
+    if (session) {
+      await listenUsers({
+        ids: session.users 
+      })
+      await listenQuestion({
+        ids: [session.currentQuestion]
+      })
+    }
   }
 
   render() {

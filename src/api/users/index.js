@@ -1,4 +1,5 @@
 import get from 'lodash/fp/get'
+import getOr from 'lodash/fp/getOr'
 import {
   getFirebaseUser,
   listenFirebaseNode,
@@ -25,6 +26,16 @@ export const listen = async cb => {
       onData : cb
     })
   )
+}
+
+export const listenMultiple = async (data, cb) => {
+  const ids = getOr([], 'ids', data)
+  ids.forEach(id => {
+    listenFirebaseNode({
+      path: `${PATH}/${id}`,
+      onData: cb
+    })
+  })
 }
 
 export const fetch = async data => {

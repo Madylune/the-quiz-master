@@ -3,11 +3,11 @@ import { connect } from 'react-redux'
 import styled from 'styled-components'
 import get from 'lodash/fp/get'
 import has from 'lodash/fp/has'
-import find from 'lodash/fp/find'
 import { Typography } from '@material-ui/core'
 import Avatar from '../Avatar'
 import Step from './steps'
 import { getQuestionById } from '../../selectors/questions'
+import { getPlayerTurn } from '../../utils/users'
 
 const StyledInstruction = styled.div`
   margin: 10px;
@@ -35,8 +35,8 @@ const StyledDesk = styled.div`
   margin: 10px;
 `
 
-const Desk = ({ quizMaster, isQuizMaster, session, users, question }) => {
-  const userTurn = find(user => user.id === get('playerTurn', session), users)
+const Desk = ({ quizMaster, isQuizMaster, session, question }) => {
+  const userTurn = getPlayerTurn(session.players, session.playerTurn)
 
   const getInstructionsContent = () => {
     switch (true) {
@@ -63,7 +63,7 @@ const Desk = ({ quizMaster, isQuizMaster, session, users, question }) => {
   return (
     <StyledDesk>
       <Instructions data={instructions} />
-      <Step isQuizMaster={isQuizMaster} session={session} />
+      <Step isQuizMaster={isQuizMaster} session={session} userTurn={userTurn} />
     </StyledDesk>
   )
 }

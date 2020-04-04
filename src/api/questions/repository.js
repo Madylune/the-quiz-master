@@ -52,7 +52,7 @@ export const updateQuestion = async data => {
     const entity = {
       ...question,
       answers: [...getOr([], 'answers', question), get('answerId',data)],
-      needVote: true
+      needVote: data.needVote
     }
     const updatedQuestion = await update(entity)
     return updatedQuestion

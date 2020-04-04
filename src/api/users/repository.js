@@ -1,9 +1,26 @@
 import { getFirebaseUser, signInAnonymously, listenFirebaseNode, signOut } from '../firebase'
-import { update, login, listen, fetch } from './index'
+import { update, login, listen, fetch, listenMultiple } from './index'
 import { dispatch } from '../../store'
 import { normalize } from '../../schema'
 import { updateEntities } from '../../actions/entities'
 import { USERS_SET_CURRENT_USER } from '../../actions/users'
+
+export const listenUsers = async data => {
+  try {
+    await listenMultiple(data, user => {
+      const { entities } = normalize({ user })
+      dispatch(updateEntities(entities))
+    })
+  } catch (e) {
+    dispatch({
+      type: 'user.create.error',
+      payload: {
+        msg: 'Impossible de récupérer les informations de l\'utilisateur',
+        e
+      }
+    })
+  }
+}
 
 export const listenUser = async () => {
   await listen(user => {

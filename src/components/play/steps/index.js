@@ -6,12 +6,12 @@ import Question from './Question'
 import Answers from './Answers'
 import { getQuestionById } from '../../../selectors/questions'
 
-const Step = ({ isQuizMaster, session, question }) => {
+const Step = ({ isQuizMaster, session, question, userTurn }) => {
   switch (true) {
     case isQuizMaster && !has('currentQuestion', session):
       return <Question session={session} />
     case has('currentQuestion', session) && has('playerTurn', session):
-      return <Answers question={question} playerTurn={get('playerTurn', session)} />
+      return <Answers question={question} session={session} userTurn={userTurn} />
     default:
       return null
   }

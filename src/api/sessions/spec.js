@@ -14,9 +14,9 @@ export const sessionEntity = ({ data, user }) =>
       'questions', // Les 3 questions par round
       'currentRound', // N° du round en cours
       'currentRoundAt', // Début du round
-      'currentQuestion', // Titre de la question en cours
+      'currentQuestion', // Id de la question
       'quizMaster',
-      'playerTurn',
+      'playerTurn', // Numéro
       'startedAt',
       'createdAt',
       'createdBy'

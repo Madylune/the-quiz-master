@@ -5,8 +5,7 @@ import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
 import find from 'lodash/fp/find'
 import concat from 'lodash/fp/concat'
-import { getUsersByIds, getCurrentUser } from '../selectors/users'
-import { listenQuestion } from '../api/questions/repository'
+import { getUsersObject, getCurrentUser } from '../selectors/users'
 import Desk from '../components/play/Desk'
 import Avatar from '../components/Avatar'
 import Crown from '../components/Crown'
@@ -56,17 +55,10 @@ const StyledCards = styled.div`
 `
 
 class PlaySession extends Component {
-  componentDidMount = async () =>{
-    const { session } = this.props
-    await listenQuestion({
-      ids: [session.currentQuestion]
-    })
-  }
-
   render() {
     const { session, users, currentUser } = this.props
     const quizMaster = find(user => user.id === get('quizMaster', session), users)
-    const isQuizMaster = currentUser.id === quizMaster.id
+    const isQuizMaster = get('id', currentUser) === get('id', quizMaster)
     const players = concat(quizMaster, get('players', session))
 
     return (
@@ -76,11 +68,11 @@ class PlaySession extends Component {
             <StyledRounds>
               Round: {get('currentRound', session)} / {get('rounds', session)}
             </StyledRounds>
-            {map(player =>
+            {players && quizMaster && map(player =>
               <StyledUser key={get('id', player)}>
                 <Avatar height={45} avatar={get('avatar', player)} />
                 <span className="Username">{get('name', player)}</span>
-                {player.id === quizMaster.id && (
+                {get('id', player) === get('id', quizMaster) && (
                   <Crown height={20} />
                 )}
                 <StyledCards>
@@ -105,7 +97,7 @@ class PlaySession extends Component {
 }
 
 const mapStateToProps = (state, { session }) => ({
-  users: getUsersByIds(state, get('users', session)),
+  users: getUsersObject(state),
   currentUser: getCurrentUser(state)
 })
 

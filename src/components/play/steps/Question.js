@@ -29,7 +29,8 @@ const Question = ({ session }) => {
     await updateSession({
       id: session.id,
       questionTitle: question,
-      playerTurn: get('players.0.id', session)
+      playerTurn: 1,
+      type: 'create_question'
     })
   }
 

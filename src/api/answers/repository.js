@@ -1,6 +1,6 @@
 import { dispatch } from '../../store'
 import { getFirebaseUser, timestamp } from '../firebase'
-import { listen, create } from './index'
+import { listen, create, update } from './index'
 import get from 'lodash/fp/get'
 import { normalize } from '../../schema'
 import { updateEntities } from '../../actions/entities' 
@@ -34,7 +34,8 @@ export const createAnswer = async data => {
     })
     await updateQuestion({
       question: data.question,
-      answerId: answer.id
+      answerId: answer.id,
+      needVote: true
     })
     const { entities } = normalize({ answer })
     dispatch(updateEntities(entities))
@@ -44,6 +45,24 @@ export const createAnswer = async data => {
       type: 'answer.create.error',
       payload: {
         msg: 'Impossible de créer une nouvelle réponse.',
+        e
+      }
+    })
+  }
+}
+
+export const updateAnswer = async data => {
+  try {
+    const entity = {
+      ...data
+    }
+    const updatedAnswer = await update(entity)
+    return updatedAnswer
+  } catch (e) {
+    dispatch({
+      type: 'answer.create.error',
+      payload: {
+        msg: 'Impossible de mettre à jour la réponse.',
         e
       }
     })

@@ -7,6 +7,7 @@ import { Typography, TextField } from '@material-ui/core'
 import { createAnswer, listenAnswers } from '../../../api/answers/repository'
 import { getCurrentUser } from '../../../selectors/users'
 import { getAnswersByQuestionId } from '../../../selectors/answers'
+import Answer from './Answer'
 
 const StyledAnswers = styled.div`
   border: 2px solid white;
@@ -36,9 +37,7 @@ const StyledAnswersList = styled.div`
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
-  }
-  li {
-    margin: 10px 0;
+    padding: 0;
   }
 `
 
@@ -70,14 +69,11 @@ class Answers extends Component {
   }
 
   componentDidUpdate = async (prevProps) => {
-    const { question, answers } = this.props
+    const { question } = this.props
     if (prevProps.question !== question) {
       await listenAnswers({
         ids: question.answers
       })
-    }
-    if (prevProps.answers !== answers) {
-      // console.log('debug ici')
     }
   }
 
@@ -95,7 +91,7 @@ class Answers extends Component {
   }
   
   render() {
-    const { playerTurn, currentUser, question, answers } = this.props
+    const { currentUser, question, answers, session, userTurn } = this.props
     return (
       <StyledAnswers>
         <StyledQuestion>
@@ -107,11 +103,16 @@ class Answers extends Component {
           <Typography variant="h6">Réponses:</Typography>
           <ul>
             {map(answer =>
-              <li key={answer.id}>{get('title', answer)}</li>
+              <Answer 
+                key={answer.id} 
+                answer={answer} 
+                session={session} 
+                currentUser={currentUser}
+              />
             , answers)}
           </ul>
         </StyledAnswersList>
-        {playerTurn === currentUser.id && (
+        {userTurn.id === currentUser.id && !get('needVote', question) && (
         <StyledInput>
           <StyledTextField
             placeholder="Ta réponse" 

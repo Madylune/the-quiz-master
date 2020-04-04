@@ -11,7 +11,7 @@ import { createQuestion } from '../../api/questions/repository'
 import { sessionEntity } from './spec'
 import { setQuizMaster } from '../../utils/users'
 import { sampleQuestions } from '../../utils/questions'
-import { getPlayers } from '../../utils/users'
+import { setPlayers, setPlayerTurn } from '../../utils/users'
 
 export const listenSession = async data => {
   try {
@@ -144,7 +144,7 @@ export const startSession = async data => {
         currentRound: 1,
         currentRoundAt: timestamp,
         quizMaster,
-        players: getPlayers(quizMaster, data.users)
+        players: setPlayers(quizMaster, data.users)
       },
       user
     })
@@ -164,19 +164,37 @@ export const startSession = async data => {
 export const updateSession = async data => {
   try {
     const user = await getFirebaseUser()
-    const question = await createQuestion({
-      sessionId: data.id,
-      title: data.questionTitle
-    })
-    const entity = sessionEntity({
-      data: {
-        ...data,
-        currentQuestion: question.id
-      },
-      user
-    })
-    const session = await update(entity)
-    return session
+    let entity
+
+    if (data.type === 'create_question') {
+      const question = await createQuestion({
+        sessionId: data.id,
+        title: data.questionTitle
+      })
+      entity = sessionEntity({
+        data: {
+          id: data.id,
+          questionTitle: data.questionTitle,
+          playerTurn: data.playerTurn,
+          currentQuestion: question.id
+        },
+        user
+      })
+    }
+
+    if (data.type === 'next_player') {
+      const session = get('session', data)
+      entity = sessionEntity({
+        data: {
+          ...data.session,
+          playerTurn: setPlayerTurn(session.players, session.playerTurn)
+        },
+        user
+      })
+    }
+
+    const updatedSession = await update(entity)
+    return updatedSession
   } catch (e) {
     dispatch({
       type: SESSIONS_CREATE_ERROR,
