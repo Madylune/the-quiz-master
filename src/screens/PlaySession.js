@@ -68,7 +68,7 @@ class PlaySession extends Component {
             <StyledRounds>
               Round: {get('currentRound', session)} / {get('rounds', session)}
             </StyledRounds>
-            {players && quizMaster && map(player =>
+            {!!players && !!quizMaster && map(player =>
               <StyledUser key={get('id', player)}>
                 <Avatar height={45} avatar={get('avatar', player)} />
                 <span className="Username">{get('name', player)}</span>
@@ -96,7 +96,7 @@ class PlaySession extends Component {
   }
 }
 
-const mapStateToProps = (state, { session }) => ({
+const mapStateToProps = state => ({
   users: getUsersObject(state),
   currentUser: getCurrentUser(state)
 })

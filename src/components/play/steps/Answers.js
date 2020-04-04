@@ -112,7 +112,7 @@ class Answers extends Component {
             , answers)}
           </ul>
         </StyledAnswersList>
-        {userTurn.id === currentUser.id && !get('needVote', question) && (
+        {userTurn.id === currentUser.id && !get('needVote', question) && ( 
         <StyledInput>
           <StyledTextField
             placeholder="Ta réponse" 
@@ -120,7 +120,7 @@ class Answers extends Component {
             onKeyPress={this.onKeyPress}
           />
         </StyledInput>
-        )} 
+         )} 
       </StyledAnswers>
     )
   }

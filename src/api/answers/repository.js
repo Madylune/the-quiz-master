@@ -2,6 +2,7 @@ import { dispatch } from '../../store'
 import { getFirebaseUser, timestamp } from '../firebase'
 import { listen, create, update } from './index'
 import get from 'lodash/fp/get'
+import getOr from 'lodash/fp/getOr'
 import { normalize } from '../../schema'
 import { updateEntities } from '../../actions/entities' 
 import { updateQuestion } from '../questions/repository'
@@ -26,16 +27,18 @@ export const listenAnswers = async data => {
 export const createAnswer = async data => {
   try {
     const user = await getFirebaseUser()
+    const question = get('question', data)
     const answer = await create({
       createdAt: timestamp,
       createdBy: get('uid', user),
-      questionId: data.question.id,
+      questionId: question.id,
       title: data.title
     })
+
     await updateQuestion({
-      question: data.question,
-      answerId: answer.id,
-      needVote: true
+      ...question,
+      needVote: true,
+      answers: [...getOr([], 'answers', question), get('id', answer)]
     })
     const { entities } = normalize({ answer })
     dispatch(updateEntities(entities))

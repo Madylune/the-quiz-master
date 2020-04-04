@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import get from 'lodash/fp/get'
 import has from 'lodash/fp/has'
 import { listenSession, findSessionByCode } from '../api/sessions/repository'
-import { listenUsers } from '../api/users/repository'
+import { listenUsers, fetchUser } from '../api/users/repository'
 import { listenQuestion } from '../api/questions/repository'
 import { getSessionByCode } from '../selectors/sessions'
 import { getCurrentUser, getUserById } from '../selectors/users'
@@ -17,16 +17,18 @@ class SessionSwitcher extends Component {
     const code = get('params.code', match)
     const session = await findSessionByCode({ code })
     const sessionId = get('id', session)
+
     sessionId && listenSession({
       ids: [sessionId]
     })
     if (session) {
       await listenUsers({
-        ids: session.users 
+        ids: session.users
       })
       await listenQuestion({
         ids: [session.currentQuestion]
       })
+      await fetchUser()
     }
   }
 

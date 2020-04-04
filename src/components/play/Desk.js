@@ -42,18 +42,18 @@ const Desk = ({ quizMaster, isQuizMaster, session, question }) => {
     switch (true) {
       case !has('currentQuestion', session):
         return {
-          user: quizMaster.avatar,
-          title: `${quizMaster.name} est en train de choisir une question`
+          user: get('avatar', quizMaster),
+          title: `${get('name', quizMaster)} est en train de choisir une question`
         }
       case has('answers', question) && get('needVote', question):
         return {
-          user: quizMaster.avatar,
+          user: get('avatar', quizMaster),
           title: `Vote du Quiz Master...`
         }
       case has('currentQuestion', session) && has('playerTurn', session):
         return {
-          user: userTurn.avatar,
-          title: `Au tour de ${userTurn.name} de répondre`
+          user: get('avatar', userTurn),
+          title: `Au tour de ${get('name', userTurn)} de répondre`
         }
       default:
         return null

@@ -5,6 +5,7 @@ import get from 'lodash/fp/get'
 import has from 'lodash/fp/has'
 import { CheckCircle as CheckCircleIcon, Cancel as CancelIcon } from '@material-ui/icons'
 import { getQuizMasterBySessionId } from '../../../selectors/sessions'
+import { getQuestionById } from '../../../selectors/questions'
 import { updateAnswer } from '../../../api/answers/repository'
 import { updateQuestion } from '../../../api/questions/repository'
 import { updateSession } from '../../../api/sessions/repository'
@@ -25,19 +26,19 @@ const StyledIcons = styled.div``
 
 const StyledCorrect = styled(CheckCircleIcon)`
   color: #00d200;
-  cursor: ${props => console.log('debug props', props) || props.mescouilles ? undefined : 'pointer'};
+  cursor: pointer;
 `
 
 const StyledUncorrect = styled(CancelIcon)`
   cursor: pointer;
 `
 
-const Answer = ({ answer, quizMaster, currentUser, session }) => {
-  const isQuizMaster = get('id', quizMaster) === get('id', currentUser)
+const Answer = ({ answer, quizMaster, currentUser, session, question }) => {
+  const isQuizMaster = quizMaster === get('id', currentUser)
 
   const nextPlayer = async () => {
     await updateQuestion({
-      id: answer.questionId,
+      ...question,
       needVote: false
     })
     await updateSession({
@@ -61,7 +62,7 @@ const Answer = ({ answer, quizMaster, currentUser, session }) => {
     })
     await nextPlayer()
   }
-   
+
   return (
     <StyledAnswer>
       {get('title', answer)}
@@ -70,14 +71,15 @@ const Answer = ({ answer, quizMaster, currentUser, session }) => {
         <StyledCorrect onClick={onClickCorrect} />
         <StyledUncorrect color="secondary" onClick={onClickUncorrect} />
       </StyledIcons>
-      )}
+      )} 
       {get('isCorrect', answer) && <CheckCircleIcon />}
     </StyledAnswer>
   )
 }
 
-const mapStateToProps = (state, { session }) => ({
-  quizMaster: getQuizMasterBySessionId(state, session.id)
+const mapStateToProps = (state, { session, answer }) => ({
+  quizMaster: getQuizMasterBySessionId(state, session.id),
+  question: getQuestionById(state, answer.questionId)
 })
 
 export default connect(mapStateToProps)(Answer)
