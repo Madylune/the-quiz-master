@@ -1,10 +1,13 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import styled from 'styled-components'
 import get from 'lodash/fp/get'
 import has from 'lodash/fp/has'
+import find from 'lodash/fp/find'
 import { Typography } from '@material-ui/core'
 import Avatar from '../Avatar'
 import Step from './steps'
+import { getQuestionById } from '../../selectors/questions'
 
 const StyledInstruction = styled.div`
   margin: 10px;
@@ -32,7 +35,9 @@ const StyledDesk = styled.div`
   margin: 10px;
 `
 
-const Desk = ({ quizMaster, isQuizMaster, session, users }) => {
+const Desk = ({ quizMaster, isQuizMaster, session, users, question }) => {
+  const userTurn = find(user => user.id === get('playerTurn', session), users)
+
   const getInstructionsContent = () => {
     switch (true) {
       case !has('currentQuestion', session):
@@ -40,10 +45,15 @@ const Desk = ({ quizMaster, isQuizMaster, session, users }) => {
           user: quizMaster.avatar,
           title: `${quizMaster.name} est en train de choisir une question`
         }
-      case has('currentQuestion', session):
+      case has('answers', question) && get('needVote', question):
         return {
-          user: users[1].avatar,
-          title: `Au tour de ${users[1].name} de répondre`
+          user: quizMaster.avatar,
+          title: `Vote du Quiz Master...`
+        }
+      case has('currentQuestion', session) && has('playerTurn', session):
+        return {
+          user: userTurn.avatar,
+          title: `Au tour de ${userTurn.name} de répondre`
         }
       default:
         return null
@@ -53,9 +63,13 @@ const Desk = ({ quizMaster, isQuizMaster, session, users }) => {
   return (
     <StyledDesk>
       <Instructions data={instructions} />
-      <Step isQuizMaster={isQuizMaster} session={session} userTurn={users[1]} />
+      <Step isQuizMaster={isQuizMaster} session={session} />
     </StyledDesk>
   )
 }
 
-export default Desk
+const mapStateToProps = (state, { session }) => ({
+  question: getQuestionById(state, get('currentQuestion', session))
+})
+
+export default connect(mapStateToProps)(Desk)

@@ -28,7 +28,8 @@ const Question = ({ session }) => {
   const onSelectQuestion = async question => {
     await updateSession({
       id: session.id,
-      questionTitle: question
+      questionTitle: question,
+      playerTurn: get('players.0.id', session)
     })
   }
 

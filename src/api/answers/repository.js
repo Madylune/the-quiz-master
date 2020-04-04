@@ -29,12 +29,12 @@ export const createAnswer = async data => {
     const answer = await create({
       createdAt: timestamp,
       createdBy: get('uid', user),
-      questionId: data.questionId,
-      value: data.value
+      questionId: data.question.id,
+      title: data.title
     })
     await updateQuestion({
-      id: data.questionId,
-      answers: [answer.id]
+      question: data.question,
+      answerId: answer.id
     })
     const { entities } = normalize({ answer })
     dispatch(updateEntities(entities))

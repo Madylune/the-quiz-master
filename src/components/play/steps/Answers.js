@@ -12,8 +12,9 @@ const StyledAnswers = styled.div`
   border: 2px solid white;
   border-radius: 5px;
   width: 85%;
-  height: 700px;
+  height: 750px;
   margin: 30px auto;
+  position: relative;
 `
 
 const StyledQuestion = styled.div`
@@ -31,7 +32,7 @@ const StyledAnswersList = styled.div`
   color: #ffffff;
   padding: 30px;
   ul {
-    height: 400px;
+    height: 380px;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
@@ -45,7 +46,7 @@ const StyledInput = styled.div`
   position: absolute;
   width: 100%;
   left: 0;
-  bottom: 0;
+  bottom: 5px;
   text-align: center;
 `
 
@@ -56,7 +57,7 @@ const StyledTextField = styled(TextField)`
     margin: auto;
     input {
       width: 100%;
-      height: 50px;
+      height: 35px;
       padding: 10px;
       font-size: 18px;
     }
@@ -65,15 +66,18 @@ const StyledTextField = styled(TextField)`
 
 class Answers extends Component {
   state = {
-    value: undefined
+    answer: undefined
   }
 
   componentDidUpdate = async (prevProps) => {
-    const { question } = this.props
+    const { question, answers } = this.props
     if (prevProps.question !== question) {
       await listenAnswers({
-        ids: [question.answers]
+        ids: question.answers
       })
+    }
+    if (prevProps.answers !== answers) {
+      // console.log('debug ici')
     }
   }
 
@@ -81,17 +85,17 @@ class Answers extends Component {
 
   onKeyPress = async e => {
     const { question } = this.props
-    const { value } = this.state
+    const { answer } = this.state
     if (get('key', e) === 'Enter') {
       await createAnswer({
-        questionId: get('title', question),
-        value
+        question,
+        title: answer
       })
     }
   }
   
   render() {
-    const { userTurn, currentUser, question, answers } = this.props
+    const { playerTurn, currentUser, question, answers } = this.props
     return (
       <StyledAnswers>
         <StyledQuestion>
@@ -103,11 +107,11 @@ class Answers extends Component {
           <Typography variant="h6">Réponses:</Typography>
           <ul>
             {map(answer =>
-              <li key={answer.id}>{get('value', answer)}</li>
+              <li key={answer.id}>{get('title', answer)}</li>
             , answers)}
           </ul>
         </StyledAnswersList>
-        {userTurn.id === currentUser.id && (
+        {playerTurn === currentUser.id && (
         <StyledInput>
           <StyledTextField
             placeholder="Ta réponse" 

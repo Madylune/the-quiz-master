@@ -8,7 +8,7 @@ import {
 } from '../firebase'
 import { questionEntity } from './spec'
 
-const PATH = '/question'
+const PATH = '/questions'
 
 export const listen = async (data, cb) => {
   const ids = getOr([], 'ids', data)

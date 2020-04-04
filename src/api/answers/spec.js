@@ -7,10 +7,11 @@ export const answerEntity = ({ data, user }) =>
   cleanSpec({
     ...pick(data, [
       'id',
-      'value',
+      'title',
       'questionId',
       'createdAt',
-      'createdBy'
+      'createdBy',
+      'isCorrect'
     ]),
     lastUpdatedBy: get('uid', user),
     lastUpdatedAt: timestamp

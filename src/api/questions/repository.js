@@ -2,6 +2,7 @@ import { dispatch } from '../../store'
 import { getFirebaseUser, timestamp } from '../firebase'
 import { listen, create, update } from './index'
 import get from 'lodash/fp/get'
+import getOr from 'lodash/fp/getOr'
 import { normalize } from '../../schema'
 import { updateEntities } from '../../actions/entities' 
 
@@ -47,16 +48,19 @@ export const createQuestion = async data => {
 
 export const updateQuestion = async data => {
   try {
+    const question = get('question', data)
     const entity = {
-      ...data
+      ...question,
+      answers: [...getOr([], 'answers', question), get('answerId',data)],
+      needVote: true
     }
-    const question = await update(entity)
-    return question
+    const updatedQuestion = await update(entity)
+    return updatedQuestion
   } catch (e) {
     dispatch({
       type: 'question.create.error',
       payload: {
-        msg: 'Impossible de mettre à jour la session.',
+        msg: 'Impossible de mettre à jour la question.',
         e
       }
     })

@@ -16,6 +16,7 @@ export const sessionEntity = ({ data, user }) =>
       'currentRoundAt', // Début du round
       'currentQuestion', // Titre de la question en cours
       'quizMaster',
+      'playerTurn',
       'startedAt',
       'createdAt',
       'createdBy'
