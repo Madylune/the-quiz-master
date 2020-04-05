@@ -138,7 +138,8 @@ export const startSession = async data => {
     const quizMaster = setQuizMaster(data.users)
     const entity = sessionEntity({
       data: {
-        ...data,
+        id: data.id,
+        rounds: data.rounds,
         startedAt: timestamp,
         questions: sampleQuestions(),
         currentRound: 1,

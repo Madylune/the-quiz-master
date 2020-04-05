@@ -37,7 +37,7 @@ const StyledDesk = styled.div`
 
 const Desk = ({ quizMaster, isQuizMaster, session, question }) => {
   const userTurn = getPlayerTurn(session.players, session.playerTurn)
-
+  console.log('debug question', question)
   const getInstructionsContent = () => {
     switch (true) {
       case !has('currentQuestion', session):

@@ -35,9 +35,9 @@ const StyledAnswersList = styled.div`
   ul {
     height: 380px;
     display: flex;
-    flex-wrap: wrap;
     flex-direction: column;
     padding: 0;
+    overflow-y: scroll;
   }
 `
 
@@ -92,6 +92,7 @@ class Answers extends Component {
   
   render() {
     const { currentUser, question, answers, session, userTurn } = this.props
+    console.log('debug question', question)
     return (
       <StyledAnswers>
         <StyledQuestion>
