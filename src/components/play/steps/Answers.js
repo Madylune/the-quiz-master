@@ -3,11 +3,23 @@ import { connect } from 'react-redux'
 import styled from 'styled-components'
 import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
+import has from 'lodash/fp/has'
+import reverse from 'lodash/fp/reverse'
 import { Typography, TextField } from '@material-ui/core'
 import { createAnswer, listenAnswers } from '../../../api/answers/repository'
-import { getCurrentUser } from '../../../selectors/users'
+import { getCurrentUser, getLoserByUserId } from '../../../selectors/users'
 import { getAnswersByQuestionId } from '../../../selectors/answers'
 import Answer from './Answer'
+
+const StyledOverlay = styled.div`
+  position: absolute;
+  background-color: rgba(0,0,0,0.9);
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+`
 
 const StyledAnswers = styled.div`
   border: 2px solid white;
@@ -91,8 +103,8 @@ class Answers extends Component {
   }
   
   render() {
-    const { currentUser, question, answers, session, userTurn } = this.props
-    console.log('debug question', question)
+    const { currentUser, question, answers, session, userTurn, loser } = this.props
+    // console.log('debug loser', loser)
     return (
       <StyledAnswers>
         <StyledQuestion>
@@ -110,10 +122,10 @@ class Answers extends Component {
                 session={session} 
                 currentUser={currentUser}
               />
-            , answers)}
+            , reverse(answers))}
           </ul>
         </StyledAnswersList>
-        {userTurn.id === currentUser.id && !get('needVote', question) && ( 
+        {userTurn.id === currentUser.id && !get('needVote', question) && !has('loser', question) && ( 
         <StyledInput>
           <StyledTextField
             placeholder="Ta réponse" 
@@ -122,6 +134,9 @@ class Answers extends Component {
           />
         </StyledInput>
          )} 
+      {has('loser', question) && (
+        <StyledOverlay />
+      )}
       </StyledAnswers>
     )
   }
@@ -129,7 +144,8 @@ class Answers extends Component {
 
 const mapStateToProps = (state, { question }) => ({
   currentUser: getCurrentUser(state),
-  answers: getAnswersByQuestionId(state, get('id', question))
+  answers: getAnswersByQuestionId(state, get('id', question)),
+  loser: getLoserByUserId(state, get('loser', question))
 })
 
 export default connect(mapStateToProps)(Answers)

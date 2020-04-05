@@ -7,6 +7,7 @@ import { Typography } from '@material-ui/core'
 import Avatar from '../Avatar'
 import Step from './steps'
 import { getQuestionById } from '../../selectors/questions'
+import { getLoserByUserId } from '../../selectors/users'
 import { getPlayerTurn } from '../../utils/users'
 
 const StyledInstruction = styled.div`
@@ -35,9 +36,9 @@ const StyledDesk = styled.div`
   margin: 10px;
 `
 
-const Desk = ({ quizMaster, isQuizMaster, session, question }) => {
+const Desk = ({ quizMaster, isQuizMaster, session, question, loser }) => {
   const userTurn = getPlayerTurn(session.players, session.playerTurn)
-  console.log('debug question', question)
+
   const getInstructionsContent = () => {
     switch (true) {
       case !has('currentQuestion', session):
@@ -49,6 +50,11 @@ const Desk = ({ quizMaster, isQuizMaster, session, question }) => {
         return {
           user: get('avatar', quizMaster),
           title: `Vote du Quiz Master...`
+        }
+      case !!loser:
+        return {
+          user: get('avatar', loser),
+          title: `${get('name', loser)} a perdu la manche et doit donner une carte au Quiz Master`
         }
       case has('currentQuestion', session) && has('playerTurn', session):
         return {
@@ -68,8 +74,12 @@ const Desk = ({ quizMaster, isQuizMaster, session, question }) => {
   )
 }
 
-const mapStateToProps = (state, { session }) => ({
-  question: getQuestionById(state, get('currentQuestion', session))
-})
+const mapStateToProps = (state, { session }) => {
+  const question = getQuestionById(state, get('currentQuestion', session))
+  return {
+    question,
+    loser: getLoserByUserId(state, get('loser', question))
+  }
+}
 
 export default connect(mapStateToProps)(Desk)

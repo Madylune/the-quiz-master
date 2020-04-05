@@ -1,5 +1,6 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router'
 import styled from 'styled-components'
 import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
@@ -10,6 +11,8 @@ import Desk from '../components/play/Desk'
 import Avatar from '../components/Avatar'
 import Crown from '../components/Crown'
 import Card from '../components/Card'
+import { ExitToApp as ExitToAppIcon } from '@material-ui/icons'
+import { getPath } from '../routes'
 
 const StyledPlaySession = styled.div`
   margin: 0;
@@ -34,6 +37,11 @@ const StyledRounds = styled.div`
   margin: 10px;
 `
 
+const StyledPlayers = styled.div`
+  overflow-y: scroll;
+  height: 90%;
+`
+
 const StyledUsers = styled.div`
   border-radius: 10px;
   background-color: #ffffff;
@@ -50,24 +58,36 @@ const StyledUser = styled.div`
   }
 `
 
+const StyledExit = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  svg {
+    margin: 0 10px;
+  }
+`
+
 const StyledCards = styled.div`
   display: flex;
 `
 
-class PlaySession extends Component {
-  render() {
-    const { session, users, currentUser } = this.props
-    const quizMaster = find(user => user.id === get('quizMaster', session), users)
-    const isQuizMaster = get('id', currentUser) === get('id', quizMaster)
-    const players = concat(quizMaster, get('players', session))
+const PlaySession = ({ history, session, users, currentUser }) => {
+  const quizMaster = find(user => user.id === get('quizMaster', session), users)
+  const isQuizMaster = get('id', currentUser) === get('id', quizMaster)
+  const players = concat(quizMaster, get('players', session))
 
-    return (
-      <StyledPlaySession>
-        <StyledContent>
-          <StyledUsers>
-            <StyledRounds>
-              Round: {get('currentRound', session)} / {get('rounds', session)}
-            </StyledRounds>
+  const onExit = () => history.push(getPath('home'))
+
+  return (
+    <StyledPlaySession>
+      <StyledContent>
+        <StyledUsers>
+          <StyledRounds>
+            Round: {get('currentRound', session)} / {get('rounds', session)}
+          </StyledRounds>
+          <StyledPlayers>
             {!!players && !!quizMaster && map(player =>
               <StyledUser key={get('id', player)}>
                 <Avatar height={45} avatar={get('avatar', player)} />
@@ -82,18 +102,21 @@ class PlaySession extends Component {
                 </StyledCards>
               </StyledUser>
             , players)}
-          </StyledUsers>
+          </StyledPlayers>
+          <StyledExit onClick={onExit}>
+            Sortir <ExitToAppIcon />
+          </StyledExit>
+        </StyledUsers>
 
-          <Desk 
-            isQuizMaster={isQuizMaster}
-            quizMaster={quizMaster}
-            session={session}
-            users={users}
-          />
-        </StyledContent>
-      </StyledPlaySession>
-    )
-  }
+        <Desk 
+          isQuizMaster={isQuizMaster}
+          quizMaster={quizMaster}
+          session={session}
+          users={users}
+        />
+      </StyledContent>
+    </StyledPlaySession>
+  )
 }
 
 const mapStateToProps = state => ({
@@ -101,4 +124,4 @@ const mapStateToProps = state => ({
   currentUser: getCurrentUser(state)
 })
 
-export default connect(mapStateToProps)(PlaySession)
+export default withRouter(connect(mapStateToProps)(PlaySession))

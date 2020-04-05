@@ -36,10 +36,11 @@ const StyledUncorrect = styled(CancelIcon)`
 const Answer = ({ answer, quizMaster, currentUser, session, question }) => {
   const isQuizMaster = quizMaster === get('id', currentUser)
 
-  const nextPlayer = async () => {
+  const nextPlayer = async loser => {
     await updateQuestion({
       ...question,
-      needVote: false
+      needVote: false,
+      loser
     })
     await updateSession({
       session,
@@ -56,11 +57,12 @@ const Answer = ({ answer, quizMaster, currentUser, session, question }) => {
   }
 
   const onClickUncorrect = async () => {
+    const loser = get('createdBy', answer)
     await updateAnswer({
       id: answer.id,
       isCorrect: false
     })
-    await nextPlayer()
+    await nextPlayer(loser)
   }
 
   return (
@@ -73,6 +75,7 @@ const Answer = ({ answer, quizMaster, currentUser, session, question }) => {
       </StyledIcons>
       )} 
       {get('isCorrect', answer) && <CheckCircleIcon />}
+      {has('isCorrect', answer) && !get('isCorrect', answer) && <CancelIcon />}
     </StyledAnswer>
   )
 }
