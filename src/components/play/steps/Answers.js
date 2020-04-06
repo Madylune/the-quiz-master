@@ -10,6 +10,7 @@ import { createAnswer, listenAnswers } from '../../../api/answers/repository'
 import { getCurrentUser, getLoserByUserId } from '../../../selectors/users'
 import { getAnswersByQuestionId } from '../../../selectors/answers'
 import Answer from './Answer'
+import Cards from './Cards'
 
 const StyledOverlay = styled.div`
   position: absolute;
@@ -104,7 +105,6 @@ class Answers extends Component {
   
   render() {
     const { currentUser, question, answers, session, userTurn, loser } = this.props
-    // console.log('debug loser', loser)
     return (
       <StyledAnswers>
         <StyledQuestion>
@@ -114,7 +114,8 @@ class Answers extends Component {
         </StyledQuestion>
         <StyledAnswersList>
           <Typography variant="h6">Réponses:</Typography>
-          <ul>
+          {answers && (
+            <ul>
             {map(answer =>
               <Answer 
                 key={answer.id} 
@@ -124,6 +125,7 @@ class Answers extends Component {
               />
             , reverse(answers))}
           </ul>
+          )}
         </StyledAnswersList>
         {userTurn.id === currentUser.id && !get('needVote', question) && !has('loser', question) && ( 
         <StyledInput>
@@ -136,6 +138,9 @@ class Answers extends Component {
          )} 
       {has('loser', question) && (
         <StyledOverlay />
+      )}
+      {get('id', loser) === get('id', currentUser) && (
+        <Cards cards={get('cards', loser)} user={loser} session={session} />
       )}
       </StyledAnswers>
     )

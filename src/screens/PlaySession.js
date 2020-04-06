@@ -6,13 +6,14 @@ import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
 import find from 'lodash/fp/find'
 import concat from 'lodash/fp/concat'
-import { getUsersObject, getCurrentUser } from '../selectors/users'
+import { getUsersByIds, getCurrentUser } from '../selectors/users'
 import Desk from '../components/play/Desk'
 import Avatar from '../components/Avatar'
 import Crown from '../components/Crown'
 import Card from '../components/Card'
 import { ExitToApp as ExitToAppIcon } from '@material-ui/icons'
 import { getPath } from '../routes'
+import { BREAKPOINTS } from '../theme'
 
 const StyledPlaySession = styled.div`
   margin: 0;
@@ -30,6 +31,11 @@ const StyledPlaySession = styled.div`
 const StyledContent = styled.div`
   display: flex;
   justify-content: space-between;
+
+  @media (max-width: ${BREAKPOINTS.xs}) {
+    overflow: scroll;
+    flex-direction: column-reverse;
+  }
 `
 
 const StyledRounds = styled.div`
@@ -48,6 +54,11 @@ const StyledUsers = styled.div`
   width: 20%;
   height: 100vh;
   margin: 10px;
+
+  @media (max-width: ${BREAKPOINTS.xs}) {
+    width: 100%;
+    margin: 0;
+  }
 `
 
 const StyledUser = styled.div`
@@ -77,7 +88,7 @@ const PlaySession = ({ history, session, users, currentUser }) => {
   const quizMaster = find(user => user.id === get('quizMaster', session), users)
   const isQuizMaster = get('id', currentUser) === get('id', quizMaster)
   const players = concat(quizMaster, get('players', session))
-
+  
   const onExit = () => history.push(getPath('home'))
 
   return (
@@ -96,9 +107,9 @@ const PlaySession = ({ history, session, users, currentUser }) => {
                   <Crown height={20} />
                 )}
                 <StyledCards>
-                  <Card />
-                  <Card />
-                  <Card />
+                  {map(card => 
+                    <Card key={card.id} card={card} isCurrentUser={get('id', currentUser) === get('id', player)} />
+                  , get('cards', find( { id: player.id }, users)))}
                 </StyledCards>
               </StyledUser>
             , players)}
@@ -119,8 +130,8 @@ const PlaySession = ({ history, session, users, currentUser }) => {
   )
 }
 
-const mapStateToProps = state => ({
-  users: getUsersObject(state),
+const mapStateToProps = (state, { session }) => ({
+  users: getUsersByIds(state, session.users),
   currentUser: getCurrentUser(state)
 })
 

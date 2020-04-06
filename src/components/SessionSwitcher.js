@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import get from 'lodash/fp/get'
 import has from 'lodash/fp/has'
+import map from 'lodash/fp/map'
 import { listenSession, findSessionByCode } from '../api/sessions/repository'
 import { listenUsers, fetchUser } from '../api/users/repository'
 import { listenQuestion } from '../api/questions/repository'
@@ -18,17 +19,30 @@ class SessionSwitcher extends Component {
     const session = await findSessionByCode({ code })
     const sessionId = get('id', session)
 
-    sessionId && listenSession({
+    sessionId && await listenSession({
       ids: [sessionId]
     })
-    if (session) {
-      await listenUsers({
-        ids: session.users
-      })
+
+    session && await fetchUser()
+
+    get('users', session) &&  await listenUsers({
+      ids: map(user => user.id ,session.users)
+    })
+    
+    get('currentQuestion', session) && await listenQuestion({
+      ids: [session.currentQuestion]
+    })
+  }
+
+  componentDidUpdate = async prevProps => {
+    const { session } = this.props
+    if (prevProps.session !== session) {
       await listenQuestion({
         ids: [session.currentQuestion]
       })
-      await fetchUser()
+      get('users', session) &&  await listenUsers({
+        ids: session.users
+      })
     }
   }
 

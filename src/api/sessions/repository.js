@@ -12,6 +12,7 @@ import { sessionEntity } from './spec'
 import { setQuizMaster } from '../../utils/users'
 import { sampleQuestions } from '../../utils/questions'
 import { setPlayers, setPlayerTurn } from '../../utils/users'
+import { initCards } from '../../utils/cards'
 
 export const listenSession = async data => {
   try {
@@ -92,13 +93,16 @@ export const joinSession = async data => {
     const id = get('id', data)
     const user = get('user', data)
     const session = await fetch({ id })
+    const cards = initCards()
     await updateUsers({
       ...user,
-      sessionId: id
+      sessionId: id,
+      cards
     })
     await updateUser({
       ...user,
-      sessionId: session.id
+      sessionId: session.id,
+      cards
     })
     return session
   } catch (e) {
@@ -187,14 +191,34 @@ export const updateSession = async data => {
       const session = get('session', data)
       entity = sessionEntity({
         data: {
-          ...data.session,
+          ...session,
           playerTurn: setPlayerTurn(session.players, session.playerTurn)
         },
         user
       })
     }
 
+    if (data.type === 'next_question') {
+      const session = get('session', data)
+      const quizMaster = session.players[0]
+      console.log('debug', { data, session, quizMaster })
+      entity = sessionEntity({
+        data: {
+          id: session.id,
+          questions: sampleQuestions(),
+          currentRound: session.currentRound + 1,
+          currentRoundAt: timestamp,
+          currentQuestion: undefined,
+          playerTurn: undefined,
+          quizMaster,
+          players: setPlayers(quizMaster, data.users)
+        },
+        user
+      })
+    }
+    console.log('debug entity', entity)
     const updatedSession = await update(entity)
+    console.log('debug updatedSession', updatedSession)
     return updatedSession
   } catch (e) {
     dispatch({

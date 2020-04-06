@@ -1,5 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
+import { Tooltip } from '@material-ui/core'
+import get from 'lodash/fp/get'
 
 const StyledCard = styled.div`
   border: 2px solid #ffffff;
@@ -11,6 +13,11 @@ const StyledCard = styled.div`
   margin: 1px;
 `
 
-const Card = () => <StyledCard />
+const Card = ({ card, isCurrentUser }) => 
+  isCurrentUser ? (
+    <Tooltip title={`${get('title', card)}: ${get('description', card)}`}>
+      <StyledCard />
+    </Tooltip>
+  ) : <StyledCard />
 
 export default Card

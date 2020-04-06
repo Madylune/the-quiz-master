@@ -9,6 +9,7 @@ import Step from './steps'
 import { getQuestionById } from '../../selectors/questions'
 import { getLoserByUserId } from '../../selectors/users'
 import { getPlayerTurn } from '../../utils/users'
+import { BREAKPOINTS } from '../../theme'
 
 const StyledInstruction = styled.div`
   margin: 10px;
@@ -19,12 +20,18 @@ const StyledInstruction = styled.div`
   justify-content: center;
 `
 
+const StyledTypography = styled(Typography)`
+  @media (max-width: ${BREAKPOINTS.xs}) {
+    font-size: 18px;
+  }
+`
+
 const Instructions = ({ data }) => 
   <StyledInstruction>
     {get('user', data) && <Avatar height={60} avatar={get('user', data)} margin="5px 10px" />}
-    <Typography variant="h6">
+    <StyledTypography variant="h6">
       {get('title', data)}
-    </Typography>
+    </StyledTypography>
   </StyledInstruction>
 
 const StyledDesk = styled.div`
@@ -34,6 +41,11 @@ const StyledDesk = styled.div`
   width: 80%;
   height: 100vh;
   margin: 10px;
+
+  @media (max-width: ${BREAKPOINTS.xs}) {
+    width: 100%;
+    margin: 0;
+  }
 `
 
 const Desk = ({ quizMaster, isQuizMaster, session, question, loser }) => {
