@@ -92,29 +92,34 @@ const Lobby = ({ users, currentUser, session }) => {
   return (
     <StyledLobby>
     <Header />
-    <StyledCode>
-      Invite tes amis: <StyledUrl>{url}</StyledUrl>
-    </StyledCode>
+    {session && currentUser && users ? (
+      <>
+      <StyledCode>
+        Invite tes amis: <StyledUrl>{url}</StyledUrl>
+      </StyledCode>
 
-    <StyledContent>
-      <Settings 
-        isDisabled={size(users) <= 1 || !sessionCreator} 
-        users={users} 
-        session={session}
-      />
-      <StyledCard>
-      <Typography variant="h5">Joueurs connectés</Typography>
-        <StyledPlayers>
-          {map(user => 
-            <StyledChar key={get('id', user)}>
-              <Avatar height={80} avatar={get('avatar',user)} margin="10px" />
-              {get('name', user)}
-              {get('id', currentUser) === get('id', user) && <StyledSpan>(Moi)</StyledSpan>}
-          </StyledChar>  
-          , users)}
-        </StyledPlayers>
-      </StyledCard>
-    </StyledContent>
+      <StyledContent>
+        <Settings 
+          isDisabled={size(users) <= 1 || !sessionCreator} 
+          users={users} 
+          session={session}
+        />
+        <StyledCard>
+        <Typography variant="h5">Joueurs connectés</Typography>
+          <StyledPlayers>
+            {map(user => 
+              <StyledChar key={get('id', user)}>
+                <Avatar height={80} avatar={get('avatar',user)} margin="10px" />
+                {get('name', user)}
+                {get('id', currentUser) === get('id', user) && <StyledSpan>(Moi)</StyledSpan>}
+            </StyledChar>  
+            , users)}
+          </StyledPlayers>
+        </StyledCard>
+      </StyledContent>
+    </>
+    ) : <div>Chargement...</div>
+    }
   </StyledLobby>
   )
 }
