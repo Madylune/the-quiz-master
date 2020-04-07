@@ -20,17 +20,25 @@ const StyledAnswer = styled.li`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  font-size: 18px;
+  height: 30px;
 `
 
 const StyledIcons = styled.div``
 
 const StyledCorrect = styled(CheckCircleIcon)`
-  color: #00d200;
-  cursor: pointer;
+  && {
+    color: #00d200;
+    font-size: 33px;
+    cursor: ${props => props.clickable ? 'pointer' : undefined};
+  }
 `
 
 const StyledUncorrect = styled(CancelIcon)`
-  cursor: pointer;
+  && {
+    font-size: 33px;
+    cursor: ${props => props.clickable ? 'pointer' : undefined};
+  }
 `
 
 const Answer = ({ answer, quizMaster, currentUser, session, question }) => {
@@ -70,12 +78,12 @@ const Answer = ({ answer, quizMaster, currentUser, session, question }) => {
       {get('title', answer)}
       {isQuizMaster && !has('isCorrect', answer) && (
       <StyledIcons>
-        <StyledCorrect onClick={onClickCorrect} />
-        <StyledUncorrect color="secondary" onClick={onClickUncorrect} />
+        <StyledCorrect onClick={onClickCorrect} clickable={true} />
+        <StyledUncorrect color="secondary" onClick={onClickUncorrect} clickable={true}/>
       </StyledIcons>
       )} 
-      {get('isCorrect', answer) && <CheckCircleIcon />}
-      {has('isCorrect', answer) && !get('isCorrect', answer) && <CancelIcon />}
+      {get('isCorrect', answer) && <StyledCorrect />}
+      {has('isCorrect', answer) && !get('isCorrect', answer) && <StyledUncorrect />}
     </StyledAnswer>
   )
 }

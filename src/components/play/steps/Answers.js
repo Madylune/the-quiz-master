@@ -81,6 +81,12 @@ class Answers extends Component {
     answer: undefined
   }
 
+  componentDidMount() {
+    const { currentUser, question, userTurn } = this.props
+    var sound = document.querySelector('.Audio')
+    get('id', userTurn) === get('id',currentUser) && !get('needVote', question) && !has('loser', question) && sound.play()
+  }
+
   componentDidUpdate = async (prevProps) => {
     const { question } = this.props
     if (prevProps.question !== question) {
@@ -128,13 +134,18 @@ class Answers extends Component {
           )}
         </StyledAnswersList>
         {get('id', userTurn) === get('id',currentUser) && !get('needVote', question) && !has('loser', question) && ( 
-        <StyledInput>
-          <StyledTextField
-            placeholder="Ta réponse" 
-            onChange={this.onAnswerChange}
-            onKeyPress={this.onKeyPress}
-          />
-        </StyledInput>
+          <>
+          <StyledInput>
+            <StyledTextField
+              placeholder="Ta réponse" 
+              onChange={this.onAnswerChange}
+              onKeyPress={this.onKeyPress}
+            />
+          </StyledInput>
+          <audio className="Audio"
+            src={require(`../../../assets/sounds/your_turn.mp3`)}>
+          </audio>
+        </>
          )} 
       {has('loser', question) && (
         <StyledOverlay />

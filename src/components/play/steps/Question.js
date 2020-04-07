@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
@@ -24,7 +24,7 @@ const StyledQuestion = styled.div`
   width: 50%;
 `
 
-const Question = ({ session }) => {
+const Question = ({ session, isQuizMaster }) => {
   const onSelectQuestion = async question => {
     await updateSession({
       id: session.id,
@@ -34,6 +34,11 @@ const Question = ({ session }) => {
     })
   }
 
+  useEffect(() => {
+    var sound = document.querySelector('.Audio')
+    isQuizMaster && sound.play()
+  }, [])
+
   return (
     <StyledQuestion>
       {map(question => 
@@ -41,6 +46,9 @@ const Question = ({ session }) => {
           {question}
         </StyledQuestionCard>
       ,get('questions', session))}
+      <audio className="Audio"
+        src={require(`../../../assets/sounds/your_turn.mp3`)}>
+      </audio>
     </StyledQuestion>
   )
 }

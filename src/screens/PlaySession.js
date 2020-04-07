@@ -86,9 +86,9 @@ const StyledCards = styled.div`
 
 const PlaySession = ({ history, session, users, currentUser }) => {
   const quizMaster = find(user => user.id === get('quizMaster', session), users)
-  const isQuizMaster = get('id', currentUser) === get('id', quizMaster)
+  const isQuizMaster = get('id', currentUser) === get('quizMaster', session)
   const players = get('players', session)
-  
+
   const onExit = () => history.push(getPath('home'))
 
   return (

@@ -10,9 +10,9 @@ import { getQuestionById } from '../../../selectors/questions'
 const Step = ({ isQuizMaster, session, question, userTurn }) => {
   switch (true) {
     case get('currentRound', session) > get('rounds', session):
-      return <Results>Finito</Results>
+      return <Results />
     case isQuizMaster && !has('currentQuestion', session):
-      return <Question session={session} />
+      return <Question session={session} isQuizMaster={isQuizMaster} />
     case has('currentQuestion', session) && has('playerTurn', session):
       return <Answers question={question} session={session} userTurn={userTurn} />
     default:
