@@ -3,11 +3,15 @@ import { connect } from 'react-redux'
 import styled from 'styled-components'
 import get from 'lodash/fp/get'
 import has from 'lodash/fp/has'
+import flow from 'lodash/fp/flow'
+import filter from 'lodash/fp/filter'
+import orderBy from 'lodash/fp/orderBy'
+import head from 'lodash/fp/head'
 import { Typography } from '@material-ui/core'
 import Avatar from '../Avatar'
 import Step from './steps'
 import { getQuestionById } from '../../selectors/questions'
-import { getLoserByUserId } from '../../selectors/users'
+import { getLoserByUserId, getUsersByIds } from '../../selectors/users'
 import { getPlayerTurn } from '../../utils/users'
 import { BREAKPOINTS } from '../../theme'
 
@@ -48,11 +52,21 @@ const StyledDesk = styled.div`
   }
 `
 
-const Desk = ({ quizMaster, isQuizMaster, session, question, loser }) => {
+const Desk = ({ quizMaster, isQuizMaster, session, question, loser, users }) => {
   const userTurn = getPlayerTurn(session.players, session.playerTurn)
+  const winner = flow(
+    filter('cards'),
+    orderBy(['cards'], ['desc']),
+    head
+  )(users)
 
   const getInstructionsContent = () => {
     switch (true) {
+      case get('currentRound', session) > get('rounds', session):
+        return {
+          user: get('avatar', winner),
+          title: `${get('name', winner)} a gagné la partie !`
+        }
       case !has('currentQuestion', session):
         return {
           user: get('avatar', quizMaster),
@@ -90,7 +104,8 @@ const mapStateToProps = (state, { session }) => {
   const question = getQuestionById(state, get('currentQuestion', session))
   return {
     question,
-    loser: getLoserByUserId(state, get('loser', question))
+    loser: getLoserByUserId(state, get('loser', question)),
+    users: getUsersByIds(state, session.users),
   }
 }
 

@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
 import find from 'lodash/fp/find'
-import concat from 'lodash/fp/concat'
+import sortBy from 'lodash/fp/sortBy'
 import { getUsersByIds, getCurrentUser } from '../selectors/users'
 import Desk from '../components/play/Desk'
 import Avatar from '../components/Avatar'
@@ -87,7 +87,7 @@ const StyledCards = styled.div`
 const PlaySession = ({ history, session, users, currentUser }) => {
   const quizMaster = find(user => user.id === get('quizMaster', session), users)
   const isQuizMaster = get('id', currentUser) === get('id', quizMaster)
-  const players = concat(quizMaster, get('players', session))
+  const players = get('players', session)
   
   const onExit = () => history.push(getPath('home'))
 
@@ -96,23 +96,33 @@ const PlaySession = ({ history, session, users, currentUser }) => {
       <StyledContent>
         <StyledUsers>
           <StyledRounds>
-            Round: {get('currentRound', session)} / {get('rounds', session)}
+            Round: {get('currentRound', session) > get('rounds', session) ? get('rounds', session) : get('currentRound', session) } / {get('rounds', session)}
           </StyledRounds>
           <StyledPlayers>
-            {!!players && !!quizMaster && map(player =>
+            {!!quizMaster && (
+              <StyledUser>
+                <Avatar height={45} avatar={get('avatar', quizMaster)} />
+                <span className="Username">{get('name', quizMaster)}</span>
+                <Crown height={20} />
+                <StyledCards>
+                  {map(card => 
+                    <Card key={card.id} card={card} isCurrentUser={get('id', currentUser) === get('id', quizMaster)} />
+                  , get('cards', quizMaster))}
+                </StyledCards>
+              </StyledUser>
+            )}
+
+            {!!players && map(player =>
               <StyledUser key={get('id', player)}>
                 <Avatar height={45} avatar={get('avatar', player)} />
                 <span className="Username">{get('name', player)}</span>
-                {get('id', player) === get('id', quizMaster) && (
-                  <Crown height={20} />
-                )}
                 <StyledCards>
                   {map(card => 
                     <Card key={card.id} card={card} isCurrentUser={get('id', currentUser) === get('id', player)} />
                   , get('cards', find( { id: player.id }, users)))}
                 </StyledCards>
               </StyledUser>
-            , players)}
+            , sortBy('order', players))}
           </StyledPlayers>
           <StyledExit onClick={onExit}>
             Sortir <ExitToAppIcon />

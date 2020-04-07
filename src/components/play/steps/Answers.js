@@ -118,7 +118,7 @@ class Answers extends Component {
             <ul>
             {map(answer =>
               <Answer 
-                key={answer.id} 
+                key={get('id',answer)} 
                 answer={answer} 
                 session={session} 
                 currentUser={currentUser}
@@ -127,7 +127,7 @@ class Answers extends Component {
           </ul>
           )}
         </StyledAnswersList>
-        {userTurn.id === currentUser.id && !get('needVote', question) && !has('loser', question) && ( 
+        {get('id', userTurn) === get('id',currentUser) && !get('needVote', question) && !has('loser', question) && ( 
         <StyledInput>
           <StyledTextField
             placeholder="Ta réponse" 

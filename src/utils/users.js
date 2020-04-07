@@ -1,7 +1,6 @@
 import get from 'lodash/fp/get'
 import sample from 'lodash/fp/sample'
 import flow from 'lodash/fp/flow'
-import shuffle from 'lodash/fp/shuffle'
 import size from 'lodash/fp/size'
 import find from 'lodash/fp/find'
 
@@ -12,13 +11,21 @@ export const setQuizMaster = flow(
   get('id')
 )
 
-export const setPlayers = (quizMaster, users) => {
-  const sortedUsers = shuffle(users.filter(user => user.id !== quizMaster))
+export const initPlayersOrder = (quizMaster, users) => {
+  const sortedUsers = users.filter(user => user.id !== quizMaster)
   return sortedUsers.map((user, i) => ({
       ...user,
       order: i + 1
     })
   )
+}
+
+export const setPlayersOrder = (quizMaster, users) => {
+  const sortedUsers = users.filter(user => user.id !== quizMaster)
+  return sortedUsers.map(user => ({
+    ...user,
+    order: get('order', user) ? get('order', user) - 1 : size(sortedUsers)
+  }))
 }
 
 export const setPlayerTurn = (players, playerTurn) => {

@@ -3,7 +3,6 @@ import { Switch, Route } from 'react-router-dom'
 import { getPath } from './routes'
 import CreateSession from './screens/CreateSession'
 import SessionSwitcher from './components/SessionSwitcher'
-import Results from './screens/Results'
 import { fetchUser } from './api/users/repository'
 
 class App extends Component {
@@ -22,11 +21,6 @@ class App extends Component {
           exact={false}
           path={getPath('session', { code: ':code' })}
           component={SessionSwitcher}
-        />
-        <Route 
-          exact={false}
-          path={getPath('results', { code: ':code' })}
-          component={Results}
         />
       </Switch>
     )

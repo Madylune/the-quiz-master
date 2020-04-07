@@ -4,8 +4,6 @@ export const getPath = (routeName, params = {}) => {
       return '/'
     case 'session':
       return `/${params.code}`
-    case 'results':
-      return `/${params.code}/results`
     default:
       return routeName
   }

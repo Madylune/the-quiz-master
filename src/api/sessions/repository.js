@@ -4,6 +4,10 @@ import { generateCode } from '../../utils/sessions'
 import { getFirebaseUser, timestamp } from '../firebase'
 import { listen, stopListen, create, fetch, fetchByCode, updateUsers, leaveUsers, update } from './index'
 import get from 'lodash/fp/get'
+import concat from 'lodash/fp/concat'
+import shuffle from 'lodash/fp/shuffle'
+import find from 'lodash/fp/find'
+import toNumber from 'lodash/fp/toNumber'
 import { normalize } from '../../schema'
 import { updateEntities } from '../../actions/entities' 
 import { createUser, updateUser } from '../../api/users/repository'
@@ -11,7 +15,7 @@ import { createQuestion } from '../../api/questions/repository'
 import { sessionEntity } from './spec'
 import { setQuizMaster } from '../../utils/users'
 import { sampleQuestions } from '../../utils/questions'
-import { setPlayers, setPlayerTurn } from '../../utils/users'
+import { initPlayersOrder, setPlayersOrder, setPlayerTurn } from '../../utils/users'
 import { initCards } from '../../utils/cards'
 
 export const listenSession = async data => {
@@ -143,13 +147,13 @@ export const startSession = async data => {
     const entity = sessionEntity({
       data: {
         id: data.id,
-        rounds: data.rounds,
+        rounds: toNumber(data.rounds),
         startedAt: timestamp,
         questions: sampleQuestions(),
         currentRound: 1,
         currentRoundAt: timestamp,
         quizMaster,
-        players: setPlayers(quizMaster, data.users)
+        players: initPlayersOrder(quizMaster, shuffle(data.users))
       },
       user
     })
@@ -200,25 +204,25 @@ export const updateSession = async data => {
 
     if (data.type === 'next_question') {
       const session = get('session', data)
-      const quizMaster = session.players[0]
-      console.log('debug', { data, session, quizMaster })
+      const quizMaster = get('id', find(player => player.order === 1, get('players', session)))
+      const lastQuizMaster = find({ id: session.quizMaster }, data.users)
+      const users = concat(lastQuizMaster, session.players)
       entity = sessionEntity({
         data: {
           id: session.id,
           questions: sampleQuestions(),
           currentRound: session.currentRound + 1,
           currentRoundAt: timestamp,
-          currentQuestion: undefined,
-          playerTurn: undefined,
+          currentQuestion: null,
+          playerTurn: null,
           quizMaster,
-          players: setPlayers(quizMaster, data.users)
+          players: setPlayersOrder(quizMaster, users)
         },
         user
       })
     }
-    console.log('debug entity', entity)
+
     const updatedSession = await update(entity)
-    console.log('debug updatedSession', updatedSession)
     return updatedSession
   } catch (e) {
     dispatch({
