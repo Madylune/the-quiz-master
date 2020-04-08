@@ -37,6 +37,7 @@ const Question = ({ session, isQuizMaster }) => {
   useEffect(() => {
     var sound = document.querySelector('.Audio')
     isQuizMaster && sound.play()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

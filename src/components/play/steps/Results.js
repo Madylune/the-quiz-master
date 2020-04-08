@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{ useEffect } from 'react'
 import styled from 'styled-components'
 import shuffle from 'lodash/fp/shuffle'
 
@@ -17,9 +17,21 @@ const GIFS = [
   'https://media.giphy.com/media/YknuLReuwWtY5FhLnN/giphy.gif'
 ]
 
-const Results = () => 
-  <StyledResults>
-    <img src={shuffle(GIFS)} alt='gif' />
-  </StyledResults>
+const Results = () => {
+  useEffect(() => {
+    var sound = document.querySelector('.Audio')
+    sound.play()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  return (
+    <StyledResults>
+      <img src={shuffle(GIFS)} alt='gif' />
+      <audio className="Audio"
+        src={require(`../../../assets/sounds/applause.wav`)}>
+      </audio>
+    </StyledResults>
+  )
+}
 
 export default Results
