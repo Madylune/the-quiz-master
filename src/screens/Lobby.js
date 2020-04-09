@@ -107,7 +107,7 @@ const Lobby = ({ users, currentUser, session }) => {
         <StyledCard>
         <Typography variant="h5">Joueurs connectés</Typography>
           <StyledPlayers>
-            {map(user => 
+            {users && map(user => 
               <StyledChar key={get('id', user)}>
                 <Avatar height={80} avatar={get('avatar',user)} margin="10px" />
                 {get('name', user)}
