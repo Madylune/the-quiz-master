@@ -9,13 +9,13 @@ const StyledClock = styled.div`
   text-align: center;
 `
 
-const Clock = ({ delay, endTime }) => {
+const Clock = ({ delay, endTime, stop }) => {
   const [ counter, setCounter ] = useState(delay)
   const dispatch = useDispatch()
 
   useEffect(() => {
     var sound = document.querySelector('.Audio')
-    if (endTime) {
+    if (endTime && !stop) {
       if (Date.now() < endTime && counter > 0) {
         setTimeout(() => setCounter(counter - 1), 1000)
         sound.play()
@@ -32,7 +32,7 @@ const Clock = ({ delay, endTime }) => {
         })
       }
     }
-  }, [counter, dispatch, endTime])
+  }, [counter, dispatch, endTime, stop])
 
   return (
   <StyledClock>

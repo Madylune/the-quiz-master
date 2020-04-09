@@ -98,7 +98,7 @@ class Answers extends Component {
     }
 
     if (prevProps.timeIsOver !== timeIsOver) {
-      !has('needVote', question) && get('id', userTurn) === get('id',currentUser) && this.sendEmptyAnswer()
+      !get('needVote', question) && get('id', userTurn) === get('id',currentUser) && this.sendEmptyAnswer()
     }
   }
 
@@ -135,8 +135,11 @@ class Answers extends Component {
             {get('title', question)}
           </Typography>
         </StyledQuestion>
-        {get('id', userTurn) === get('id',currentUser)  && (
-          <Clock delay={get('delay', session)} endTime={endTime} />
+        {get('id', userTurn) === get('id',currentUser) 
+          && !get('needVote', question) 
+          && !has('loser', question)  
+          && (
+          <Clock delay={get('delay', session)} endTime={endTime} stop={get('needVote', question)} />
         )}
         <StyledAnswersList>
           <Typography variant="h6">Réponses:</Typography>
