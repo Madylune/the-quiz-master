@@ -30,17 +30,18 @@ const StyledFormControl = styled(FormControl)`
 `
 
 const Settings = ({ isDisabled, session, users }) => {
-  const [ rounds, setRounds ] = useState(2)
+  const [ rounds, setRounds ] = useState(3)
   const onRoundsChange = e => setRounds(e.target.value)
 
-  const [ time, setTime ] = useState(5)
-  const onTimeChange = e => setTime(e.target.value)
+  const [ delay, setDelay ] = useState(5)
+  const onTimeChange = e => setDelay(e.target.value)
 
   const onStartGame = async () => {
     await startSession({ 
       id: session.id,
       rounds,
-      users
+      users,
+      delay
     })
   }
 
@@ -51,7 +52,7 @@ const Settings = ({ isDisabled, session, users }) => {
         <InputLabel>Nombre de tours</InputLabel>
         <Input 
           type="number" 
-          inputProps={{ min: "2", max: "10", step: "1" }}
+          inputProps={{ min: "3", max: "20", step: "1" }}
           value={rounds} 
           onChange={onRoundsChange}
           disabled={isDisabled}
@@ -61,8 +62,8 @@ const Settings = ({ isDisabled, session, users }) => {
         <InputLabel>Temps de réponse (en secondes)</InputLabel>
         <Input 
           type="number" 
-          inputProps={{ min: "5", max: "20", step: "1" }}
-          value={time} 
+          inputProps={{ min: "5", max: "15", step: "1" }}
+          value={delay} 
           onChange={onTimeChange}
           disabled={isDisabled}
         />

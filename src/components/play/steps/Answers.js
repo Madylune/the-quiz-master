@@ -9,8 +9,10 @@ import { Typography, TextField } from '@material-ui/core'
 import { createAnswer, listenAnswers } from '../../../api/answers/repository'
 import { getCurrentUser, getLoserByUserId } from '../../../selectors/users'
 import { getAnswersByQuestionId } from '../../../selectors/answers'
+import { getTimeOver } from '../../../selectors/clock'
 import Answer from './Answer'
 import Cards from './Cards'
+import Clock from '../../Clock'
 
 const StyledOverlay = styled.div`
   position: absolute;
@@ -88,12 +90,25 @@ class Answers extends Component {
   }
 
   componentDidUpdate = async (prevProps) => {
-    const { question } = this.props
+    const { question, timeIsOver, userTurn, currentUser } = this.props
     if (prevProps.question !== question) {
       await listenAnswers({
         ids: question.answers
       })
     }
+
+    if (prevProps.timeIsOver !== timeIsOver) {
+      !has('needVote', question) && get('id', userTurn) === get('id',currentUser) && this.sendEmptyAnswer()
+    }
+  }
+
+  sendEmptyAnswer = async () => {
+    const { question } = this.props
+    const { answer } = this.state
+    await createAnswer({
+      question,
+      title: answer || 'Pas de réponse'
+    })
   }
 
   onAnswerChange = e => this.setState({ answer: e.target.value })
@@ -111,6 +126,8 @@ class Answers extends Component {
   
   render() {
     const { currentUser, question, answers, session, userTurn, loser } = this.props
+    const endTime = get('lastUpdatedAt', question) + (get('delay', session) * 1000)
+
     return (
       <StyledAnswers>
         <StyledQuestion>
@@ -118,6 +135,9 @@ class Answers extends Component {
             {get('title', question)}
           </Typography>
         </StyledQuestion>
+        {get('id', userTurn) === get('id',currentUser)  && (
+          <Clock delay={get('delay', session)} endTime={endTime} />
+        )}
         <StyledAnswersList>
           <Typography variant="h6">Réponses:</Typography>
           {answers && (
@@ -133,7 +153,10 @@ class Answers extends Component {
           </ul>
           )}
         </StyledAnswersList>
-        {get('id', userTurn) === get('id',currentUser) && !get('needVote', question) && !has('loser', question) && ( 
+        {get('id', userTurn) === get('id',currentUser) 
+          && !get('needVote', question) 
+          && !has('loser', question) && Date.now() < endTime 
+          && ( 
           <>
           <StyledInput>
             <StyledTextField
@@ -161,7 +184,8 @@ class Answers extends Component {
 const mapStateToProps = (state, { question }) => ({
   currentUser: getCurrentUser(state),
   answers: getAnswersByQuestionId(state, get('id', question)),
-  loser: getLoserByUserId(state, get('loser', question))
+  loser: getLoserByUserId(state, get('loser', question)),
+  timeIsOver: getTimeOver(state)
 })
 
 export default connect(mapStateToProps)(Answers)

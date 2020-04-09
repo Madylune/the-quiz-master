@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux'
 import entities from './entities'
 import currentUser from './currentUser'
-import cards from './cards'
+import clock from './clock'
 
 const reducers = combineReducers({
   entities,
   currentUser,
-  cards
+  clock
 })
 
 export default reducers

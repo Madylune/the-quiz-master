@@ -1,1 +1,0 @@
-export const CARDS_CHANGE_OWNER = 'cards.change.owner'

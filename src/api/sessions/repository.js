@@ -148,6 +148,7 @@ export const startSession = async data => {
       data: {
         id: data.id,
         rounds: toNumber(data.rounds),
+        delay: toNumber(data.delay),
         startedAt: timestamp,
         questions: sampleQuestions(),
         currentRound: 1,

@@ -1,0 +1,1 @@
+export const CLOCK_SET_TIME_OVER = 'clock.set.time.over'

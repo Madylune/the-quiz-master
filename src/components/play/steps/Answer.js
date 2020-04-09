@@ -41,7 +41,7 @@ const StyledUncorrect = styled(CancelIcon)`
   }
 `
 
-const Answer = ({ answer, quizMaster, currentUser, session, question }) => {
+const Answer = ({ answer, quizMaster, currentUser, session, question, timeIsOver }) => {
   const isQuizMaster = quizMaster === get('id', currentUser)
 
   const nextPlayer = async loser => {
