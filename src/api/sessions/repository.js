@@ -8,6 +8,7 @@ import concat from 'lodash/fp/concat'
 import shuffle from 'lodash/fp/shuffle'
 import find from 'lodash/fp/find'
 import toNumber from 'lodash/fp/toNumber'
+import filter from 'lodash/fp/filter'
 import { normalize } from '../../schema'
 import { updateEntities } from '../../actions/entities' 
 import { createUser, updateUser } from '../../api/users/repository'
@@ -205,9 +206,11 @@ export const updateSession = async data => {
 
     if (data.type === 'next_question') {
       const session = get('session', data)
-      const quizMaster = get('id', find(player => player.order === 1, get('players', session)))
+      const players = filter(player => !get('eliminated', player) ,get('players', session))
+      const quizMaster = get('id', find(player => player.order === 1, players))
       const lastQuizMaster = find({ id: session.quizMaster }, data.users)
-      const users = concat(lastQuizMaster, session.players)
+      const users = concat(lastQuizMaster, players)
+
       entity = sessionEntity({
         data: {
           id: session.id,

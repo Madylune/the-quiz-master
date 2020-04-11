@@ -13,6 +13,7 @@ const StyledCard = styled.div`
   margin: 2px;
   display: flex;
   align-items: center;
+  cursor: ${props => props.isCurrentUser ? 'pointer' : undefined};
 `
 
 const StyledPicto = styled.img`
@@ -22,7 +23,7 @@ const StyledPicto = styled.img`
 const Card = ({ card, isCurrentUser }) => 
   isCurrentUser ? (
     <Tooltip title={`${get('title', card)}: ${get('description', card)}`}>
-      <StyledCard isCurrentUser={isCurrentUser}>
+      <StyledCard isCurrentUser={isCurrentUser} onClick={() => console.log('debug use card:', get('id', card))}>
         {get('picture', card) ? <StyledPicto src={require(`../assets/picto/${get('picture', card)}.png`)} /> : null}
       </StyledCard>
     </Tooltip>

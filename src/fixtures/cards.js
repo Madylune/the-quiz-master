@@ -4,6 +4,7 @@ export const CARDS = [
     picture: 'inverse',
     description: 'Je peux inverser l\'ordre de passage',
     title: 'Inverse le sens'
+    //effect: updateSession({ players: initPlayersOrder(reverse(session.players)) })
   },
   {
     id: 'card_2',
@@ -16,12 +17,14 @@ export const CARDS = [
     picture: 'change',
     description: 'Je peux échanger mes cartes contre celles d\'un autre joueur',
     title: 'Echange de main'
+    //effect: updateUsers({ cards: get('cards', user)})
   },
   {
     id: 'card_4',
     picture: 'reduce',
     description: 'Je peux réduire le temps de réponse de mes adversaires de 2 secondes',
     title: 'Réduction de temps'
+    //effect: delay + 2000
   },
   {
     id: 'card_5',

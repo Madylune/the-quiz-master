@@ -109,7 +109,7 @@ const Lobby = ({ users, currentUser, session }) => {
           <StyledPlayers>
             {users && map(user => 
               <StyledChar key={get('id', user)}>
-                <Avatar height={80} avatar={get('avatar',user)} margin="10px" />
+                {get('avatar',user) && <Avatar height={80} avatar={get('avatar',user)} margin="10px" />}
                 {get('name', user)}
                 {get('id', currentUser) === get('id', user) && <StyledSpan>(Moi)</StyledSpan>}
             </StyledChar>  
