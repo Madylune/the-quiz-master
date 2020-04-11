@@ -11,18 +11,7 @@ import { getCurrentUser, getLoserByUserId } from '../../../selectors/users'
 import { getAnswersByQuestionId } from '../../../selectors/answers'
 import { getTimeOver } from '../../../selectors/clock'
 import Answer from './Answer'
-import Cards from './Cards'
 import Clock from '../../Clock'
-
-const StyledOverlay = styled.div`
-  position: absolute;
-  background-color: rgba(0,0,0,0.9);
-  z-index: 1;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-`
 
 const StyledAnswers = styled.div`
   border: 2px solid white;
@@ -96,7 +85,6 @@ class Answers extends Component {
         ids: question.answers
       })
     }
-
     if (prevProps.timeIsOver !== timeIsOver) {
       !get('needVote', question) && get('id', userTurn) === get('id',currentUser) && this.sendEmptyAnswer()
     }
@@ -125,7 +113,7 @@ class Answers extends Component {
   }
   
   render() {
-    const { currentUser, question, answers, session, userTurn, loser } = this.props
+    const { currentUser, question, answers, session, userTurn } = this.props
     const endTime = get('lastUpdatedAt', question) + (get('delay', session) * 1000)
 
     return (
@@ -137,7 +125,6 @@ class Answers extends Component {
         </StyledQuestion>
         {get('id', userTurn) === get('id',currentUser) 
           && !get('needVote', question) 
-          && !has('loser', question)  
           && (
           <Clock delay={get('delay', session)} endTime={endTime} stop={get('needVote', question)} />
         )}
@@ -158,7 +145,7 @@ class Answers extends Component {
         </StyledAnswersList>
         {get('id', userTurn) === get('id',currentUser) 
           && !get('needVote', question) 
-          && !has('loser', question) && Date.now() < endTime 
+          && Date.now() < endTime 
           && ( 
           <>
           <StyledInput>
@@ -173,12 +160,6 @@ class Answers extends Component {
           </audio>
         </>
          )} 
-      {has('loser', question) && (
-        <StyledOverlay />
-      )}
-      {get('id', loser) === get('id', currentUser) && (
-        <Cards cards={get('cards', loser)} user={loser} session={session} />
-      )}
       </StyledAnswers>
     )
   }

@@ -13,7 +13,8 @@ export const questionEntity = ({ data, user }) =>
       'createdAt',
       'createdBy',
       'needVote',
-      'loser'
+      'losers',
+      'winner'
     ]),
     lastUpdatedBy: get('uid', user),
     lastUpdatedAt: timestamp

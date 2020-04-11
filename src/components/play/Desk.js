@@ -7,11 +7,15 @@ import flow from 'lodash/fp/flow'
 import filter from 'lodash/fp/filter'
 import orderBy from 'lodash/fp/orderBy'
 import head from 'lodash/fp/head'
+import size from 'lodash/fp/size'
+import difference from 'lodash/fp/difference'
+import map from 'lodash/fp/map'
+import find from 'lodash/fp/find'
 import { Typography } from '@material-ui/core'
 import Avatar from '../Avatar'
 import Step from './steps'
 import { getQuestionById } from '../../selectors/questions'
-import { getLoserByUserId, getUsersByIds } from '../../selectors/users'
+import { getUsersByIds } from '../../selectors/users'
 import { getPlayerTurn } from '../../utils/users'
 import { BREAKPOINTS } from '../../theme'
 
@@ -52,20 +56,29 @@ const StyledDesk = styled.div`
   }
 `
 
-const Desk = ({ quizMaster, isQuizMaster, session, question, loser, users }) => {
+const Desk = ({ quizMaster, isQuizMaster, session, question, users }) => {
   const userTurn = getPlayerTurn(session.players, session.playerTurn)
-  const winner = flow(
-    filter('cards'),
-    orderBy(['cards'], ['desc']),
+  const sessionWinner = flow(
+    filter('points'),
+    orderBy(['points'], ['desc']),
     head
   )(users)
+  const losers = get('losers', question)
+  const roundWinner = flow(
+    flow(
+      map('id'),
+      players => difference(players, losers)
+    ),
+    head,
+    id => find({ id }, users)
+  )(get('players', session))
 
   const getInstructionsContent = () => {
     switch (true) {
       case get('currentRound', session) > get('rounds', session):
         return {
-          user: get('avatar', winner),
-          title: `${get('name', winner)} a gagné la partie !`
+          user: get('avatar', sessionWinner),
+          title: `${get('name', sessionWinner)} a gagné la partie !`
         }
       case !has('currentQuestion', session):
         return {
@@ -77,10 +90,10 @@ const Desk = ({ quizMaster, isQuizMaster, session, question, loser, users }) => 
           user: get('avatar', quizMaster),
           title: `Vote du Quiz Master...`
         }
-      case !!loser:
+      case size(losers) === (size(get('players', session)) - 1):
         return {
-          user: get('avatar', loser),
-          title: `${get('name', loser)} a perdu la manche et doit donner une carte au Quiz Master`
+          user: get('avatar', roundWinner),
+          title: `${get('name', roundWinner)} a remporté le tour !`
         }
       case has('currentQuestion', session) && has('playerTurn', session):
         return {
@@ -104,7 +117,6 @@ const mapStateToProps = (state, { session }) => {
   const question = getQuestionById(state, get('currentQuestion', session))
   return {
     question,
-    loser: getLoserByUserId(state, get('loser', question)),
     users: getUsersByIds(state, session.users),
   }
 }

@@ -2,6 +2,7 @@ import { dispatch } from '../../store'
 import { getFirebaseUser, timestamp } from '../firebase'
 import { listen, create, update } from './index'
 import get from 'lodash/fp/get'
+import getOr from 'lodash/fp/getOr'
 import { normalize } from '../../schema'
 import { updateEntities } from '../../actions/entities' 
 
@@ -49,7 +50,8 @@ export const updateQuestion = async data => {
   try {
     const entity = {
       ...data,
-      needVote: data.needVote
+      needVote: data.needVote,
+      losers: get('losers', data) || get('loser', data) ? [...getOr([], 'losers', data), get('loser', data)] : null
     }
     const updatedQuestion = await update(entity)
     return updatedQuestion

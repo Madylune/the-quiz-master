@@ -10,7 +10,6 @@ import { getUsersByIds, getCurrentUser } from '../selectors/users'
 import Desk from '../components/play/Desk'
 import Avatar from '../components/Avatar'
 import Crown from '../components/Crown'
-import Card from '../components/Card'
 import { ExitToApp as ExitToAppIcon } from '@material-ui/icons'
 import { getPath } from '../routes'
 import { BREAKPOINTS } from '../theme'
@@ -67,6 +66,9 @@ const StyledUser = styled.div`
     margin: 5px;
     font-size: 18px;
   }
+  .Subtitle {
+    font-size: 15px;
+  }
 `
 
 const StyledExit = styled.div`
@@ -78,10 +80,6 @@ const StyledExit = styled.div`
   svg {
     margin: 0 10px;
   }
-`
-
-const StyledCards = styled.div`
-  display: flex;
 `
 
 const PlaySession = ({ history, session, users, currentUser }) => {
@@ -103,12 +101,8 @@ const PlaySession = ({ history, session, users, currentUser }) => {
               <StyledUser>
                 <Avatar height={45} avatar={get('avatar', quizMaster)} />
                 <span className="Username">{get('name', quizMaster)}</span>
+                {get('id', quizMaster) === get('id', currentUser) && <span className="Subtitle">(Moi)</span>}
                 <Crown height={20} />
-                <StyledCards>
-                  {map(card => 
-                    <Card key={card.id} card={card} isCurrentUser={get('id', currentUser) === get('id', quizMaster)} />
-                  , get('cards', quizMaster))}
-                </StyledCards>
               </StyledUser>
             )}
 
@@ -116,11 +110,7 @@ const PlaySession = ({ history, session, users, currentUser }) => {
               <StyledUser key={get('id', player)}>
                 <Avatar height={45} avatar={get('avatar', player)} />
                 <span className="Username">{get('name', player)}</span>
-                <StyledCards>
-                  {map(card => 
-                    <Card key={card.id} card={card} isCurrentUser={get('id', currentUser) === get('id', player)} />
-                  , get('cards', find( { id: player.id }, users)))}
-                </StyledCards>
+                {get('id', player) === get('id', currentUser) && <span className="Subtitle">(Moi)</span>}
               </StyledUser>
             , sortBy('order', players))}
           </StyledPlayers>

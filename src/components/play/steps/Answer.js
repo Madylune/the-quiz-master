@@ -28,7 +28,7 @@ const StyledIcons = styled.div``
 
 const StyledCorrect = styled(CheckCircleIcon)`
   && {
-    color: #00d200;
+    color: ${props => props.clickable ? '#00d200' : undefined};
     font-size: 33px;
     cursor: ${props => props.clickable ? 'pointer' : undefined};
   }
@@ -41,7 +41,7 @@ const StyledUncorrect = styled(CancelIcon)`
   }
 `
 
-const Answer = ({ answer, quizMaster, currentUser, session, question, timeIsOver }) => {
+const Answer = ({ answer, quizMaster, currentUser, session, question }) => {
   const isQuizMaster = quizMaster === get('id', currentUser)
 
   const nextPlayer = async loser => {
@@ -52,7 +52,8 @@ const Answer = ({ answer, quizMaster, currentUser, session, question, timeIsOver
     })
     await updateSession({
       session,
-      type: 'next_player'
+      type: 'next_player',
+      loser
     })
   }
 

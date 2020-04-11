@@ -17,7 +17,7 @@ import { sessionEntity } from './spec'
 import { setQuizMaster } from '../../utils/users'
 import { sampleQuestions } from '../../utils/questions'
 import { initPlayersOrder, setPlayersOrder, setPlayerTurn } from '../../utils/users'
-import { initCards } from '../../utils/cards'
+// import { initCards } from '../../utils/cards'
 
 export const listenSession = async data => {
   try {
@@ -98,17 +98,21 @@ export const joinSession = async data => {
     const id = get('id', data)
     const user = get('user', data)
     const session = await fetch({ id })
-    const cards = initCards()
+    // const cards = initCards()
+
     await updateUsers({
       ...user,
       sessionId: id,
-      cards
+      // cards,
+      online: true
     })
     await updateUser({
       ...user,
       sessionId: session.id,
-      cards
+      // cards,
+      online: true
     })
+
     return session
   } catch (e) {
     dispatch({
@@ -195,10 +199,12 @@ export const updateSession = async data => {
 
     if (data.type === 'next_player') {
       const session = get('session', data)
+      const loser = get('loser', data)
+      const players = filter(player => player.id !== loser, get('players', session))
       entity = sessionEntity({
         data: {
           ...session,
-          playerTurn: setPlayerTurn(session.players, session.playerTurn)
+          playerTurn: setPlayerTurn(players, session.playerTurn)
         },
         user
       })
@@ -206,7 +212,7 @@ export const updateSession = async data => {
 
     if (data.type === 'next_question') {
       const session = get('session', data)
-      const players = filter(player => !get('eliminated', player) ,get('players', session))
+      const players = get('players', session)
       const quizMaster = get('id', find(player => player.order === 1, players))
       const lastQuizMaster = find({ id: session.quizMaster }, data.users)
       const users = concat(lastQuizMaster, players)
