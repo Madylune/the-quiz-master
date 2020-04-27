@@ -383,5 +383,5 @@ export const QUESTIONS = [
   'Citer une expression avec le mot feu dedans',
   'Citer un sitcom américain',
   'Citer une série diffusée sur Disney Channel',
-  'Citer une série télévisée d\'AB Productions'
+  'Citer un sitcom du Club Dorothée'
 ]

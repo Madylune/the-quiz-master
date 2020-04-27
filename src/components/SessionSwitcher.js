@@ -11,6 +11,7 @@ import { getCurrentUser, getUserById } from '../selectors/users'
 import Lobby from '../screens/Lobby'
 import JoinSession from '../screens/JoinSession'
 import PlaySession from '../screens/PlaySession'
+import UnfoundSession from '../screens/UnfoundSession'
 
 class SessionSwitcher extends Component {
   componentDidMount = async () => {
@@ -54,7 +55,7 @@ class SessionSwitcher extends Component {
       case get('sessionId', user) === get('id', session):
         return <Lobby session={session} />
       default:
-        return <JoinSession session={session} />
+        return session ? <JoinSession session={session} /> : <UnfoundSession />
     }
   }
 }
