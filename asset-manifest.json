@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.js": "/the-quiz-master/static/js/main.f552b79a.chunk.js",
+    "main.js.map": "/the-quiz-master/static/js/main.f552b79a.chunk.js.map",
+    "runtime-main.js": "/the-quiz-master/static/js/runtime-main.e1dc3225.js",
+    "runtime-main.js.map": "/the-quiz-master/static/js/runtime-main.e1dc3225.js.map",
+    "static/js/2.6bb5742c.chunk.js": "/the-quiz-master/static/js/2.6bb5742c.chunk.js",
+    "static/js/2.6bb5742c.chunk.js.map": "/the-quiz-master/static/js/2.6bb5742c.chunk.js.map",
+    "index.html": "/the-quiz-master/index.html",
+    "precache-manifest.ab88c27c9ea279e9a133b3bd30d09cba.js": "/the-quiz-master/precache-manifest.ab88c27c9ea279e9a133b3bd30d09cba.js",
+    "service-worker.js": "/the-quiz-master/service-worker.js",
+    "static/js/2.6bb5742c.chunk.js.LICENSE.txt": "/the-quiz-master/static/js/2.6bb5742c.chunk.js.LICENSE.txt",
+    "static/media/applause.wav": "/the-quiz-master/static/media/applause.9caf24c4.wav",
+    "static/media/bg.jpg": "/the-quiz-master/static/media/bg.a1a20659.jpg",
+    "static/media/clock.ogg": "/the-quiz-master/static/media/clock.89195f36.ogg",
+    "static/media/crown.png": "/the-quiz-master/static/media/crown.b3e755d0.png",
+    "static/media/your_turn.mp3": "/the-quiz-master/static/media/your_turn.85f9d299.mp3"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e1dc3225.js",
+    "static/js/2.6bb5742c.chunk.js",
+    "static/js/main.f552b79a.chunk.js"
+  ]
+}
