@@ -1,14 +1,17 @@
 import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
 import { withRouter } from 'react-router'
 import styled from 'styled-components'
 import { TextField, Button, Typography } from '@material-ui/core'
 import times from 'lodash/fp/times'
 import map from 'lodash/fp/map'
+import get from 'lodash/fp/get'
 import { joinSession } from '../api/sessions/repository'
 import Header from '../components/Header'
 import Rules from '../components/Rules'
 import { BREAKPOINTS } from '../theme' 
 import Avatar from '../components/Avatar'
+import { getUserById } from '../selectors/users'
 
 const StyledJoinSession = styled.div`
   margin: 0;
@@ -82,6 +85,12 @@ const StyledChar = styled.div`
   border-radius: 20px;
 `
 
+const StyledText = styled(Typography)`
+  && {
+    text-align: center;
+  }
+`
+
 const JoinSession = ({ session }) => {
   const [ avatar, setAvatar ] = useState(undefined)
   const onSelectAvatar = value => setAvatar(value)
@@ -101,10 +110,14 @@ const JoinSession = ({ session }) => {
     }
   }
 
+  const sessionCreator = useSelector(state => getUserById(state, get('createdBy', session)))
+  console.log('debug sessionCreator', sessionCreator)
+
   const characters = times(i => `Char-${i + 1}`, 12)
   return (
     <StyledJoinSession>
       <Header />
+      <StyledText variant="h6">{get('name', sessionCreator)} t'a invité à jouer</StyledText>
       <StyledContent>
         <StyledCard>
           <StyledTitle variant="h5">

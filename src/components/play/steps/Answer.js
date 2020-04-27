@@ -6,9 +6,11 @@ import has from 'lodash/fp/has'
 import { CheckCircle as CheckCircleIcon, Cancel as CancelIcon } from '@material-ui/icons'
 import { getQuizMasterBySessionId } from '../../../selectors/sessions'
 import { getQuestionById } from '../../../selectors/questions'
+import { getUserById } from '../../../selectors/users'
 import { updateAnswer } from '../../../api/answers/repository'
 import { updateQuestion } from '../../../api/questions/repository'
 import { updateSession } from '../../../api/sessions/repository'
+import Avatar from '../../Avatar'
 
 const StyledAnswer = styled.li`
   background-color: #ffffff;
@@ -22,6 +24,11 @@ const StyledAnswer = styled.li`
   justify-content: space-between;
   font-size: 18px;
   height: 30px;
+`
+
+const StyledLeft = styled.div`
+  display: flex;
+  align-items: center;
 `
 
 const StyledIcons = styled.div``
@@ -41,42 +48,48 @@ const StyledUncorrect = styled(CancelIcon)`
   }
 `
 
-const Answer = ({ answer, quizMaster, currentUser, session, question }) => {
+const Answer = ({ answer, quizMaster, currentUser, session, question, user }) => {
   const isQuizMaster = quizMaster === get('id', currentUser)
 
-  const nextPlayer = async loser => {
+  const nextPlayer = async ({ user, isLoser }) => {
     await updateQuestion({
       ...question,
       needVote: false,
-      loser
+      loser: isLoser ? user : null
     })
     await updateSession({
       session,
       type: 'next_player',
-      loser
+      loser: isLoser ? user : null,
+      user,
+      points: isLoser ? 0 : 10
     })
   }
 
   const onClickCorrect = async () => {
+    const user = get('createdBy', answer)
     await updateAnswer({
       id: answer.id,
       isCorrect: true
     })
-    await nextPlayer()
+    await nextPlayer({ user, isLoser: false })
   }
 
   const onClickUncorrect = async () => {
-    const loser = get('createdBy', answer)
+    const user = get('createdBy', answer)
     await updateAnswer({
       id: answer.id,
       isCorrect: false
     })
-    await nextPlayer(loser)
+    await nextPlayer({ user, isLoser: true })
   }
 
   return (
     <StyledAnswer>
-      {get('title', answer)}
+      <StyledLeft>
+        <Avatar height={40} avatar={get('avatar', user)} margin="10px" />
+        {get('title', answer)}
+      </StyledLeft>
       {isQuizMaster && !has('isCorrect', answer) && (
       <StyledIcons>
         <StyledCorrect onClick={onClickCorrect} clickable={true} />
@@ -91,7 +104,8 @@ const Answer = ({ answer, quizMaster, currentUser, session, question }) => {
 
 const mapStateToProps = (state, { session, answer }) => ({
   quizMaster: getQuizMasterBySessionId(state, session.id),
-  question: getQuestionById(state, answer.questionId)
+  question: getQuestionById(state, answer.questionId),
+  user: getUserById(state, answer.createdBy)
 })
 
 export default connect(mapStateToProps)(Answer)

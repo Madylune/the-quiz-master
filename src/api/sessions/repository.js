@@ -17,7 +17,6 @@ import { sessionEntity } from './spec'
 import { setQuizMaster } from '../../utils/users'
 import { sampleQuestions } from '../../utils/questions'
 import { initPlayersOrder, setPlayersOrder, setPlayerTurn } from '../../utils/users'
-// import { initCards } from '../../utils/cards'
 
 export const listenSession = async data => {
   try {
@@ -98,18 +97,15 @@ export const joinSession = async data => {
     const id = get('id', data)
     const user = get('user', data)
     const session = await fetch({ id })
-    // const cards = initCards()
 
     await updateUsers({
       ...user,
       sessionId: id,
-      // cards,
       online: true
     })
     await updateUser({
       ...user,
       sessionId: session.id,
-      // cards,
       online: true
     })
 
@@ -201,6 +197,7 @@ export const updateSession = async data => {
       const session = get('session', data)
       const loser = get('loser', data)
       const players = filter(player => player.id !== loser, get('players', session))
+
       entity = sessionEntity({
         data: {
           ...session,

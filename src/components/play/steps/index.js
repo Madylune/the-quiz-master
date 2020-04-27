@@ -9,11 +9,11 @@ import Results from './Results'
 import Next from './Next'
 import { getQuestionById } from '../../../selectors/questions'
 
-const Step = ({ isQuizMaster, session, question, userTurn }) => {
+const Step = ({ isQuizMaster, session, question, userTurn }) => { 
   switch (true) {
     case get('currentRound', session) > get('rounds', session):
       return <Results />
-    case size(get('losers', question)) === (size(get('players', session)) - 1):
+    case get('losers', question) && size(get('losers', question)) === (size(get('players', session)) - 1):
       return <Next session={session} />
     case isQuizMaster && !has('currentQuestion', session):
       return <Question session={session} isQuizMaster={isQuizMaster} />

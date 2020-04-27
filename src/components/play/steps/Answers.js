@@ -7,6 +7,8 @@ import has from 'lodash/fp/has'
 import reverse from 'lodash/fp/reverse'
 import { Typography, TextField } from '@material-ui/core'
 import { createAnswer, listenAnswers } from '../../../api/answers/repository'
+import { updateQuestion } from '../../../api/questions/repository'
+import { updateSession } from '../../../api/sessions/repository'
 import { getCurrentUser, getLoserByUserId } from '../../../selectors/users'
 import { getAnswersByQuestionId } from '../../../selectors/answers'
 import { getTimeOver } from '../../../selectors/clock'
@@ -31,6 +33,7 @@ const StyledQuestion = styled.div`
   align-items: center;
   justify-content: center;
   margin: 20px auto;
+  text-align: center;
 `
 
 const StyledAnswersList = styled.div`
@@ -91,12 +94,21 @@ class Answers extends Component {
   }
 
   sendEmptyAnswer = async () => {
-    const { question } = this.props
+    const { question, currentUser, session } = this.props
     const { answer } = this.state
-    await createAnswer({
-      question,
-      title: answer || 'Pas de réponse'
-    })
+    if (!answer) {
+      await updateQuestion({
+        ...question,
+        needVote: false,
+        loser: get('id', currentUser)
+      })
+      await updateSession({
+        session,
+        type: 'next_player',
+        loser: get('id', currentUser),
+        user: currentUser
+      })
+    }
   }
 
   onAnswerChange = e => this.setState({ answer: e.target.value })

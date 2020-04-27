@@ -14,7 +14,7 @@ export const userEntity = ({ data, user }) =>
       'order',
       'online',
       'loser',
-      'points'
+      'score'
     ]),
     id: get('uid', user),
     createdAt: getOr(timestamp, 'createdAt', data),
