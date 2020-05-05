@@ -20,7 +20,8 @@ export const sessionEntity = ({ data, user }) =>
       'playerTurn', // Numéro
       'startedAt',
       'createdAt',
-      'createdBy'
+      'createdBy',
+      'scores'
     ]),
     lastUpdatedBy: get('uid', user),
     lastUpdatedAt: timestamp

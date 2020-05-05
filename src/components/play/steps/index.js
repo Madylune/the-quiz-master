@@ -13,7 +13,7 @@ const Step = ({ isQuizMaster, session, question, userTurn }) => {
   switch (true) {
     case get('currentRound', session) > get('rounds', session):
       return <Results />
-    case get('losers', question) && size(get('losers', question)) === (size(get('players', session)) - 1):
+    case get('losers', question) && size(get('losers', question)) === size(get('players', session)):
       return <Next session={session} />
     case isQuizMaster && !has('currentQuestion', session):
       return <Question session={session} isQuizMaster={isQuizMaster} />

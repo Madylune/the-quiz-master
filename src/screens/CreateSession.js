@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { TextField, Button, Typography } from '@material-ui/core'
 import times from 'lodash/fp/times'
 import map from 'lodash/fp/map'
+import get from 'lodash/fp/get'
 import { createSession } from '../api/sessions/repository'
 import { getPath } from '../routes'
 import Header from '../components/Header'
@@ -96,7 +97,7 @@ const CreateSession = ({ history }) => {
         name,
         avatar
       })
-      history.push(getPath('session', { code: session.code }))
+      history.push(getPath('session', { code: get('code', session) }))
     }
   }
 

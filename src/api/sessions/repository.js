@@ -223,7 +223,8 @@ export const updateSession = async data => {
           currentQuestion: null,
           playerTurn: null,
           quizMaster,
-          players: setPlayersOrder(quizMaster, users)
+          players: setPlayersOrder(quizMaster, users),
+          scores: data.scores
         },
         user
       })

@@ -13,8 +13,7 @@ export const userEntity = ({ data, user }) =>
       'cards',
       'order',
       'online',
-      'loser',
-      'score'
+      'loser'
     ]),
     id: get('uid', user),
     createdAt: getOr(timestamp, 'createdAt', data),

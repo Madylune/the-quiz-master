@@ -111,8 +111,6 @@ const JoinSession = ({ session }) => {
   }
 
   const sessionCreator = useSelector(state => getUserById(state, get('createdBy', session)))
-  console.log('debug sessionCreator', sessionCreator)
-
   const characters = times(i => `Char-${i + 1}`, 12)
   return (
     <StyledJoinSession>

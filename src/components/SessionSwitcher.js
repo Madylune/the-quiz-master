@@ -6,8 +6,10 @@ import map from 'lodash/fp/map'
 import { listenSession, findSessionByCode } from '../api/sessions/repository'
 import { listenUsers, fetchUser } from '../api/users/repository'
 import { listenQuestion } from '../api/questions/repository'
+import { listenAnswers } from '../api/answers/repository'
 import { getSessionByCode } from '../selectors/sessions'
 import { getCurrentUser, getUserById } from '../selectors/users'
+import { getQuestionById } from '../selectors/questions'
 import Lobby from '../screens/Lobby'
 import JoinSession from '../screens/JoinSession'
 import PlaySession from '../screens/PlaySession'
@@ -36,13 +38,18 @@ class SessionSwitcher extends Component {
   }
 
   componentDidUpdate = async prevProps => {
-    const { session } = this.props
+    const { session, question } = this.props
     if (prevProps.session !== session) {
       await listenQuestion({
         ids: [session.currentQuestion]
       })
       get('users', session) &&  await listenUsers({
         ids: session.users
+      })
+    }
+    if (prevProps.question !== question) {
+      await listenAnswers({
+        ids: get('answers', question)
       })
     }
   }
@@ -62,9 +69,11 @@ class SessionSwitcher extends Component {
 
 const mapStateToProps = (state, { match }) => {
   const currentUser = getCurrentUser(state)
+  const session = getSessionByCode(state, get('params.code', match))
   return {
-    session: getSessionByCode(state, get('params.code', match)),
-    user: getUserById(state, get('id', currentUser))
+    session,
+    user: getUserById(state, get('id', currentUser)),
+    question: getQuestionById(state, get('currentQuestion', session))
   }
 }
 

@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
 import styled from 'styled-components'
 import get from 'lodash/fp/get'
+import getOr from 'lodash/fp/getOr'
 import map from 'lodash/fp/map'
 import find from 'lodash/fp/find'
 import sortBy from 'lodash/fp/sortBy'
@@ -69,6 +70,11 @@ const StyledUser = styled.div`
   .Subtitle {
     font-size: 15px;
   }
+  .Points {
+    font-style: italic;
+    font-weight: bold;
+    margin-left: 5px;
+  }
 `
 
 const StyledExit = styled.div`
@@ -103,6 +109,7 @@ const PlaySession = ({ history, session, users, currentUser }) => {
                 <span className="Username">{get('name', quizMaster)}</span>
                 {get('id', quizMaster) === get('id', currentUser) && <span className="Subtitle">(Moi)</span>}
                 <Crown height={20} />
+                <span className="Points">{getOr(0, 'score', find({ userId: quizMaster.id }, get('scores', session)))} pts</span>
               </StyledUser>
             )}
 
@@ -111,6 +118,7 @@ const PlaySession = ({ history, session, users, currentUser }) => {
                 <Avatar height={45} avatar={get('avatar', player)} />
                 <span className="Username">{get('name', player)}</span>
                 {get('id', player) === get('id', currentUser) && <span className="Subtitle">(Moi)</span>}
+                <span className="Points">{getOr(0, 'score', find({ userId: player.id }, get('scores', session)))} pts</span>
               </StyledUser>
             , sortBy('order', players))}
           </StyledPlayers>

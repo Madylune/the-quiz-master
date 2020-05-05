@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import get from 'lodash/fp/get'
 import has from 'lodash/fp/has'
 import flow from 'lodash/fp/flow'
-import filter from 'lodash/fp/filter'
 import orderBy from 'lodash/fp/orderBy'
 import head from 'lodash/fp/head'
 import size from 'lodash/fp/size'
@@ -59,10 +58,10 @@ const StyledDesk = styled.div`
 const Desk = ({ quizMaster, isQuizMaster, session, question, users }) => {
   const userTurn = getPlayerTurn(session.players, session.playerTurn)
   const sessionWinner = flow(
-    filter('points'),
-    orderBy(['points'], ['desc']),
-    head
-  )(users)
+    orderBy(['score'], ['desc']),
+    head,
+    user => find({ id: user.userId }, users)
+  )(get('scores', session))
   const losers = get('losers', question)
   const roundWinner = flow(
     flow(
@@ -75,26 +74,31 @@ const Desk = ({ quizMaster, isQuizMaster, session, question, users }) => {
 
   const getInstructionsContent = () => {
     switch (true) {
+      // Fin de partie
       case get('currentRound', session) > get('rounds', session):
         return {
           user: get('avatar', sessionWinner),
           title: `${get('name', sessionWinner)} a gagné la partie !`
         }
+      // Nouveau tour: Choix question
       case !has('currentQuestion', session):
         return {
           user: get('avatar', quizMaster),
           title: `${get('name', quizMaster)} est en train de choisir une question`
         }
+      // Vote
       case has('answers', question) && get('needVote', question):
         return {
           user: get('avatar', quizMaster),
           title: `Vote du Quiz Master...`
         }
-      case size(losers) === (size(get('players', session)) - 1):
+      // Fin de tour
+      case size(losers) === size(get('players', session)):
         return {
           user: get('avatar', roundWinner),
-          title: `${get('name', roundWinner)} a remporté le tour !`
+          title: roundWinner ? `${get('name', roundWinner)} a remporté le tour !` : 'Fin du tour'
         }
+      // Tour d'un joueur: Ecrire une réponse
       case has('currentQuestion', session) && has('playerTurn', session):
         return {
           user: get('avatar', userTurn),
