@@ -60,7 +60,7 @@ const Desk = ({ quizMaster, isQuizMaster, session, question, users }) => {
   const sessionWinner = flow(
     orderBy(['score'], ['desc']),
     head,
-    user => find({ id: user.userId }, users)
+    user => find({ id: get('userId', user) }, users)
   )(get('scores', session))
   const losers = get('losers', question)
   const roundWinner = flow(

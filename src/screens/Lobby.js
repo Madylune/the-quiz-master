@@ -58,7 +58,7 @@ const StyledContent = styled.div`
 const StyledCard = styled.div`
   margin: 30px;
   background-color: #ffffff;
-  width: 30%;
+  width: ${props => props.sessionCreator ? '30%' : '50%'};
   min-height: 500px;
   border-radius: 20px;
 
@@ -94,18 +94,22 @@ const Lobby = ({ users, currentUser, session }) => {
     <Header />
     {session && currentUser && users ? (
       <>
-      <StyledCode>
-        Invite tes amis: <StyledUrl>{url}</StyledUrl>
-      </StyledCode>
+      {sessionCreator ? (
+        <StyledCode>
+          Invite tes amis: <StyledUrl>{url}</StyledUrl>
+        </StyledCode>
+      ) : <Typography variant="h5">La partie va bientôt commencer !</Typography>}
 
       <StyledContent>
-        <Settings 
-          isDisabled={size(users) <= 1 || !sessionCreator} 
-          users={users} 
-          session={session}
-        />
-        <StyledCard>
-        <Typography variant="h5">Joueurs connectés</Typography>
+        {sessionCreator && (
+          <Settings 
+            isDisabled={size(users) <= 1} 
+            users={users} 
+            session={session}
+          />
+        )}
+        <StyledCard sessionCreator={sessionCreator}>
+          <Typography variant="h5">Joueurs connectés</Typography>
           <StyledPlayers>
             {users && map(user => 
               <StyledChar key={get('id', user)}>
