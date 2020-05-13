@@ -208,7 +208,7 @@ export const updateSession = async data => {
     if (data.type === 'next_question') {
       const session = get('session', data)
       const players = get('players', session)
-      const quizMaster = head(players)
+      const quizMaster = get('id', head(players))
       const lastQuizMaster = find({ id: session.quizMaster }, data.users)
       const users = concat(lastQuizMaster, players)
 

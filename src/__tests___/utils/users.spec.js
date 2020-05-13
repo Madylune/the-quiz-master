@@ -1,7 +1,7 @@
-import { setPlayers } from '../../utils/users'
+import { setPlayers, setPlayerTurn } from '../../utils/users'
 
 describe('setPlayers', () => {
-  it('should return an array of players', () => {
+  it('without loser - should return an array of players', () => {
     const quizMaster = 'lRxPNlxyeXMJKRCoRC5rt8Jv8xt2'
     const users = [
       {
@@ -37,7 +37,7 @@ describe('setPlayers', () => {
     ])
   })
 
-  it('should return an array of players with loser canPlay: false', () => {
+  it('with loser - should return an array of players', () => {
     const loserId = 'pBafuvswTqTzNcGoNIPl5D4mqKa2'
     const quizMaster = 'lRxPNlxyeXMJKRCoRC5rt8Jv8xt2'
     const users = [
@@ -72,5 +72,46 @@ describe('setPlayers', () => {
         canPlay: false
       }
     ])
+  })
+})
+
+describe('setPlayerTurn', () => {
+  it('should return user turn id', () => {
+    const playerTurn = 'lRxPNlxyeXMJKRCoRC5rt8Jv8xt2'
+    const players = [
+      {
+        id: "pBafuvswTqTzNcGoNIPl5D4mqKa2",
+        name: "Julie",
+        canPlay: true
+      },
+      {
+        id: "lRxPNlxyeXMJKRCoRC5rt8Jv8xt2",
+        name: "Romain",
+        canPlay: true
+      }
+    ]
+    expect(setPlayerTurn(players, playerTurn)).toEqual('pBafuvswTqTzNcGoNIPl5D4mqKa2')
+  })
+
+  it('should return user turn id', () => {
+    const playerTurn = 'lRxPNlxyeXMJKRCoRC5rt8Jv8xt2'
+    const players = [
+      {
+        id: "pBafuvswTqTzNcGoNIPl5D4mqKa2",
+        name: "Julie",
+        canPlay: true
+      },
+      {
+        id: "lRxPNlxyeXMJKRCoRC5rt8Jv8xt2",
+        name: "Romain",
+        canPlay: true
+      },
+      {
+        id: "jRxPNlxyekzMJKRCoRC5rt7Jv8xt1",
+        name: "Popo",
+        canPlay: false
+      }
+    ]
+    expect(setPlayerTurn(players, playerTurn)).toEqual('pBafuvswTqTzNcGoNIPl5D4mqKa2')
   })
 })
