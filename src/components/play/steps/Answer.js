@@ -62,7 +62,7 @@ const Answer = ({ answer, quizMaster, currentUser, session, question, user, user
       type: 'next_player',
       loser: isLoser ? user : null,
       users,
-      points: isLoser ? 0 : 10
+      scores: isLoser ? 0 : 10
     })
   }
 

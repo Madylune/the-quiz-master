@@ -3,18 +3,11 @@ import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { Button, Typography } from '@material-ui/core'
 import get from 'lodash/fp/get'
-import getOr from 'lodash/fp/getOr'
-import flow from 'lodash/fp/flow'
-import filter from 'lodash/fp/filter'
-import map from 'lodash/fp/map'
-import size from 'lodash/fp/size'
-import multiply from 'lodash/fp/multiply'
-import add from 'lodash/fp/add'
-import find from 'lodash/fp/find'
 import { getQuizMasterBySessionId } from '../../../selectors/sessions'
 import { getCurrentUser, getUsersByIds } from '../../../selectors/users'
 import { getAnswers } from '../../../selectors/answers'
 import { updateSession } from '../../../api/sessions/repository'
+import { calcUsersScore } from '../../../utils/users'
 
 const StyledNext = styled.div`
   text-align: center;
@@ -29,21 +22,7 @@ const StyledTypography = styled(Typography)`
 
 const Next = ({ session, quizMaster, currentUser, users, answers }) => {
 
-  const usersData = map(user => {
-    const userPoints = getOr(0, 'score', find({ userId: user.id }, get('scores', session)))
-    const score = flow(
-      answers => filter({ createdBy: user.id }, answers),
-      filter('isCorrect'),
-      size,
-      add(userPoints),
-      points => user.id === quizMaster ? 5 : multiply(points, 10)
-    )(answers)
-
-    return ({
-      userId: user.id,
-      score
-    })
-  }, users)
+  const usersData = calcUsersScore({ answers, session, quizMaster, users })
 
   const onNextQuestion = async () => {
     await updateSession({

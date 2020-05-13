@@ -8,6 +8,10 @@ import findIndex from 'lodash/fp/findIndex'
 import filter from 'lodash/fp/filter'
 import map from 'lodash/fp/map'
 import includes from 'lodash/fp/includes'
+import find from 'lodash/fp/find'
+import size from 'lodash/fp/size'
+import add from 'lodash/fp/add'
+import multiply from 'lodash/fp/multiply'
 
 export const isSessionCreator = (session, userId) => get('createdBy', session) === userId
 export const isLoser = (losers, userId) => includes(userId, losers)
@@ -36,4 +40,22 @@ export const setPlayerTurn = (players, playerTurn) => {
   } else {
     return get('id', getOr(0, playerTurnIndex + 1, filteredPlayers))
   }
+}
+
+export const calcUsersScore = ({ answers, session, quizMaster, users }) => {
+  return map(user => {
+    const userPoints = getOr(0, 'score', find({ userId: user.id }, get('scores', session)))
+    const score = flow(
+      answers => filter({ createdBy: user.id }, answers),
+      filter('isCorrect'),
+      size,
+      points => user.id === quizMaster ? 5 : multiply(points, 10),
+      add(userPoints)
+    )(answers)
+
+    return ({
+      userId: user.id,
+      score
+    })
+  }, users)
 }

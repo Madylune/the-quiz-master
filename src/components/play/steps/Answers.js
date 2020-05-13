@@ -93,22 +93,26 @@ class Answers extends Component {
     }
   }
 
-  sendEmptyAnswer = async () => {
-    const { question, currentUser, session } = this.props
+  nextPlayer = async userId => {
+    const { question, session, users } = this.props
+    await updateQuestion({
+      ...question,
+      needVote: false,
+      loser: userId
+    })
+    await updateSession({
+      session,
+      type: 'next_player',
+      loser: userId,
+      users,
+      scores: 0
+    })
+  }
+
+  sendEmptyAnswer = () => {
+    const { currentUser } = this.props
     const { answer } = this.state
-    if (!answer) {
-      await updateQuestion({
-        ...question,
-        needVote: false,
-        loser: get('id', currentUser)
-      })
-      await updateSession({
-        session,
-        type: 'next_player',
-        loser: get('id', currentUser),
-        user: currentUser
-      })
-    }
+    !answer && this.nextPlayer(currentUser.id)
   }
 
   onAnswerChange = e => this.setState({ answer: e.target.value })

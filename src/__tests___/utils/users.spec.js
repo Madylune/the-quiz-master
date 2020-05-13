@@ -1,4 +1,4 @@
-import { setPlayers, setPlayerTurn } from '../../utils/users'
+import { setPlayers, setPlayerTurn, calcUsersScore } from '../../utils/users'
 
 describe('setPlayers', () => {
   it('without loser - should return an array of players', () => {
@@ -113,5 +113,59 @@ describe('setPlayerTurn', () => {
       }
     ]
     expect(setPlayerTurn(players, playerTurn)).toEqual('pBafuvswTqTzNcGoNIPl5D4mqKa2')
+  })
+})
+
+describe('calcUsersScore', () => {
+  it('should return scores', () => {
+    const answers = [
+      {
+        createdBy: "pBafuvswTqTzNcGoNIPl5D4mqKa2",
+        isCorrect: true
+      },
+      {
+        createdBy: "pBafuvswTqTzNcGoNIPl5D4mqKa2",
+        isCorrect: true
+      },
+      {
+        createdBy: "pBafuvswTqTzNcGoNIPl5D4mqKa2",
+        isCorrect: false
+      }
+    ]
+    const session = {
+      scores: [
+        {
+          score: 5,
+          userId: "pBafuvswTqTzNcGoNIPl5D4mqKa2"
+        },
+        {
+          score: 10,
+          userId: "lRxPNlxyeXMJKRCoRC5rt8Jv8xt2"
+        }
+      ]
+    }
+    const quizMaster = "lRxPNlxyeXMJKRCoRC5rt8Jv8xt2"
+    const users = [
+      {
+        id: "pBafuvswTqTzNcGoNIPl5D4mqKa2",
+        name: "Julie",
+        canPlay: true
+      },
+      {
+        id: "lRxPNlxyeXMJKRCoRC5rt8Jv8xt2",
+        name: "Romain",
+        canPlay: true
+      }
+    ]
+    expect(calcUsersScore({ answers, session, quizMaster, users })).toEqual([
+      {
+        score: 25,
+        userId: "pBafuvswTqTzNcGoNIPl5D4mqKa2"
+      },
+      {
+        score: 15,
+        userId: "lRxPNlxyeXMJKRCoRC5rt8Jv8xt2"
+      }
+    ])
   })
 })
