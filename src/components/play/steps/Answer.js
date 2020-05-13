@@ -6,7 +6,7 @@ import has from 'lodash/fp/has'
 import { CheckCircle as CheckCircleIcon, Cancel as CancelIcon } from '@material-ui/icons'
 import { getQuizMasterBySessionId } from '../../../selectors/sessions'
 import { getQuestionById } from '../../../selectors/questions'
-import { getUserById } from '../../../selectors/users'
+import { getUserById, getUsersByIds } from '../../../selectors/users'
 import { updateAnswer } from '../../../api/answers/repository'
 import { updateQuestion } from '../../../api/questions/repository'
 import { updateSession } from '../../../api/sessions/repository'
@@ -48,7 +48,7 @@ const StyledUncorrect = styled(CancelIcon)`
   }
 `
 
-const Answer = ({ answer, quizMaster, currentUser, session, question, user }) => {
+const Answer = ({ answer, quizMaster, currentUser, session, question, user, users }) => {
   const isQuizMaster = quizMaster === get('id', currentUser)
 
   const nextPlayer = async ({ user, isLoser }) => {
@@ -61,7 +61,7 @@ const Answer = ({ answer, quizMaster, currentUser, session, question, user }) =>
       session,
       type: 'next_player',
       loser: isLoser ? user : null,
-      user,
+      users,
       points: isLoser ? 0 : 10
     })
   }
@@ -105,7 +105,8 @@ const Answer = ({ answer, quizMaster, currentUser, session, question, user }) =>
 const mapStateToProps = (state, { session, answer }) => ({
   quizMaster: getQuizMasterBySessionId(state, session.id),
   question: getQuestionById(state, answer.questionId),
-  user: getUserById(state, answer.createdBy)
+  user: getUserById(state, answer.createdBy),
+  users: getUsersByIds(state, get('users', session))
 })
 
 export default connect(mapStateToProps)(Answer)

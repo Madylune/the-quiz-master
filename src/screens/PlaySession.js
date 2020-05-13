@@ -6,14 +6,15 @@ import get from 'lodash/fp/get'
 import getOr from 'lodash/fp/getOr'
 import map from 'lodash/fp/map'
 import find from 'lodash/fp/find'
-import sortBy from 'lodash/fp/sortBy'
 import { getUsersByIds, getCurrentUser } from '../selectors/users'
+import { getQuestionById } from '../selectors/questions'
 import Desk from '../components/play/Desk'
 import Avatar from '../components/Avatar'
 import Crown from '../components/Crown'
 import { ExitToApp as ExitToAppIcon } from '@material-ui/icons'
 import { getPath } from '../routes'
 import { BREAKPOINTS } from '../theme'
+import { isLoser } from '../utils/users'
 
 const StyledPlaySession = styled.div`
   margin: 0;
@@ -63,6 +64,7 @@ const StyledUsers = styled.div`
 
 const StyledUser = styled.div`
   margin: 10px 5px;
+  opacity: ${props => props.userIsLoser ? 0.5 : 1};
   .Username{
     margin: 5px;
     font-size: 18px;
@@ -88,13 +90,12 @@ const StyledExit = styled.div`
   }
 `
 
-const PlaySession = ({ history, session, users, currentUser }) => {
+const PlaySession = ({ history, session, users, currentUser, currentQuestion }) => {
   const quizMaster = find(user => user.id === get('quizMaster', session), users)
   const isQuizMaster = get('id', currentUser) === get('quizMaster', session)
   const players = get('players', session)
-
+  
   const onExit = () => history.push(getPath('home'))
-
   return (
     <StyledPlaySession>
       <StyledContent>
@@ -114,13 +115,13 @@ const PlaySession = ({ history, session, users, currentUser }) => {
             )}
 
             {!!players && map(player =>
-              <StyledUser key={get('id', player)}>
+              <StyledUser key={get('id', player)} userIsLoser={isLoser(get('losers', currentQuestion), player.id)}>
                 <Avatar height={45} avatar={get('avatar', player)} />
                 <span className="Username">{get('name', player)}</span>
                 {get('id', player) === get('id', currentUser) && <span className="Subtitle">(Moi)</span>}
                 <span className="Points">{getOr(0, 'score', find({ userId: player.id }, get('scores', session)))} pts</span>
               </StyledUser>
-            , sortBy('order', players))}
+            , players)}
           </StyledPlayers>
           <StyledExit onClick={onExit}>
             Sortir <ExitToAppIcon />
@@ -140,7 +141,8 @@ const PlaySession = ({ history, session, users, currentUser }) => {
 
 const mapStateToProps = (state, { session }) => ({
   users: getUsersByIds(state, session.users),
-  currentUser: getCurrentUser(state)
+  currentUser: getCurrentUser(state),
+  currentQuestion: getQuestionById(state, get('currentQuestion', session))
 })
 
 export default withRouter(connect(mapStateToProps)(PlaySession))

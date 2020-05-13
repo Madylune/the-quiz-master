@@ -12,7 +12,6 @@ export const sessionEntity = ({ data, user }) =>
       'players', // Les joueurs sans le quiz Master
       'delay',
       'rounds', // Nombre total de rounds
-      'questions', // Les 3 questions par round
       'currentRound', // N° du round en cours
       'currentRoundAt', // Début du round
       'currentQuestion', // Id de la question

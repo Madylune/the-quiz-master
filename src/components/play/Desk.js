@@ -14,8 +14,7 @@ import { Typography } from '@material-ui/core'
 import Avatar from '../Avatar'
 import Step from './steps'
 import { getQuestionById } from '../../selectors/questions'
-import { getUsersByIds } from '../../selectors/users'
-import { getPlayerTurn } from '../../utils/users'
+import { getUsersByIds, getUserById } from '../../selectors/users'
 import { BREAKPOINTS } from '../../theme'
 
 const StyledInstruction = styled.div`
@@ -55,8 +54,7 @@ const StyledDesk = styled.div`
   }
 `
 
-const Desk = ({ quizMaster, isQuizMaster, session, question, users }) => {
-  const userTurn = getPlayerTurn(session.players, session.playerTurn)
+const Desk = ({ quizMaster, isQuizMaster, session, question, users, userTurn }) => {
   const sessionWinner = flow(
     orderBy(['score'], ['desc']),
     head,
@@ -122,6 +120,7 @@ const mapStateToProps = (state, { session }) => {
   return {
     question,
     users: getUsersByIds(state, session.users),
+    userTurn: getUserById(state, session.playerTurn)
   }
 }
 

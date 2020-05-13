@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
-import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
+import get from 'lodash/fp/get'
 import { updateSession } from '../../../api/sessions/repository'
+import { sampleQuestions } from '../../../utils/questions'
 
 const StyledQuestionCard = styled.div`
   background-color: #ffffff;
@@ -25,11 +26,13 @@ const StyledQuestion = styled.div`
 `
 
 const Question = ({ session, isQuizMaster }) => {
+  const questions = sampleQuestions()
+  
   const onSelectQuestion = async question => {
     await updateSession({
       id: session.id,
       questionTitle: question,
-      playerTurn: 1,
+      playerTurn: get(['players', 0, 'id'], session),
       type: 'create_question'
     })
   }
@@ -46,7 +49,7 @@ const Question = ({ session, isQuizMaster }) => {
         <StyledQuestionCard key={question} onClick={() => onSelectQuestion(question)}>
           {question}
         </StyledQuestionCard>
-      ,get('questions', session))}
+      , questions)}
       <audio className="Audio"
         src={require(`../../../assets/sounds/your_turn.mp3`)}>
       </audio>

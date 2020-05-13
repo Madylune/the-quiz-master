@@ -1,39 +1,39 @@
 import get from 'lodash/fp/get'
+import getOr from 'lodash/fp/getOr'
 import sample from 'lodash/fp/sample'
 import flow from 'lodash/fp/flow'
-import size from 'lodash/fp/size'
-import find from 'lodash/fp/find'
+import head from 'lodash/fp/head'
+import last from 'lodash/fp/last'
+import findIndex from 'lodash/fp/findIndex'
+import filter from 'lodash/fp/filter'
+import map from 'lodash/fp/map'
+import includes from 'lodash/fp/includes'
 
 export const isSessionCreator = (session, userId) => get('createdBy', session) === userId
+export const isLoser = (losers, userId) => includes(userId, losers)
 
 export const setQuizMaster = flow(
   sample,
   get('id')
 )
 
-export const initPlayersOrder = (quizMaster, users) => {
-  const sortedUsers = users.filter(user => user.id !== quizMaster)
-  return sortedUsers.map((user, i) => ({
+export const setPlayers = ({ quizMaster, users, loserId = undefined }) => {
+  const sortedUsers = flow(
+    filter(user => user.id !== quizMaster),
+    users => map(user => ({
       ...user,
-      order: i + 1
-    })
-  )
-}
-
-export const setPlayersOrder = (quizMaster, users) => {
-  const sortedUsers = users.filter(user => user.id !== quizMaster)
-  return sortedUsers.map(user => ({
-    ...user,
-    order: get('order', user) ? get('order', user) - 1 : size(sortedUsers)
-  }))
+      canPlay: !!loserId && user.id === loserId ? false : true
+    }), users)
+  )(users)
+  return sortedUsers
 }
 
 export const setPlayerTurn = (players, playerTurn) => {
-  if (playerTurn === size(players)) {
-    return 1
+  const filteredPlayers = filter(player => player.canPlay, players)
+  const playerTurnIndex = findIndex(p => p.id === playerTurn,filteredPlayers)
+  if (playerTurn === get('id', last(filteredPlayers))) {
+    return get('id', head(filteredPlayers))
   } else {
-    return playerTurn + 1
+    return get('id', getOr(0, playerTurnIndex + 1, filteredPlayers))
   }
 }
-
-export const getPlayerTurn = (players, playerTurn) => find(player => player.order === playerTurn, players)

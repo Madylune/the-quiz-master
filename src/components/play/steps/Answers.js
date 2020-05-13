@@ -9,7 +9,7 @@ import { Typography, TextField } from '@material-ui/core'
 import { createAnswer, listenAnswers } from '../../../api/answers/repository'
 import { updateQuestion } from '../../../api/questions/repository'
 import { updateSession } from '../../../api/sessions/repository'
-import { getCurrentUser, getLoserByUserId } from '../../../selectors/users'
+import { getCurrentUser, getLoserByUserId, getUsersByIds } from '../../../selectors/users'
 import { getAnswersByQuestionId } from '../../../selectors/answers'
 import { getTimeOver } from '../../../selectors/clock'
 import Answer from './Answer'
@@ -177,11 +177,12 @@ class Answers extends Component {
   }
 }
 
-const mapStateToProps = (state, { question }) => ({
+const mapStateToProps = (state, { question, session }) => ({
   currentUser: getCurrentUser(state),
   answers: getAnswersByQuestionId(state, get('id', question)),
   loser: getLoserByUserId(state, get('loser', question)),
-  timeIsOver: getTimeOver(state)
+  timeIsOver: getTimeOver(state),
+  users: getUsersByIds(state, get('users', session))
 })
 
 export default connect(mapStateToProps)(Answers)
