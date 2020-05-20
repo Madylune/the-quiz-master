@@ -14,6 +14,7 @@ import { getAnswersByQuestionId } from '../../../selectors/answers'
 import { getTimeOver } from '../../../selectors/clock'
 import Answer from './Answer'
 import Clock from '../../Clock'
+import { isSafari, isMobileSafari } from 'react-device-detect'
 
 const StyledAnswers = styled.div`
   border: 2px solid white;
@@ -70,6 +71,8 @@ const StyledTextField = styled(TextField)`
   }
 `
 
+const allowedSound = !isSafari && !isMobileSafari
+
 class Answers extends Component {
   state = {
     answer: undefined
@@ -78,7 +81,7 @@ class Answers extends Component {
   componentDidMount() {
     const { currentUser, question, userTurn } = this.props
     var sound = document.querySelector('.Audio')
-    get('id', userTurn) === get('id',currentUser) && !get('needVote', question) && !has('loser', question) && sound.play()
+    get('id', userTurn) === get('id',currentUser) && !get('needVote', question) && !has('loser', question) && allowedSound && sound.play()
   }
 
   componentDidUpdate = async (prevProps) => {
@@ -95,6 +98,7 @@ class Answers extends Component {
 
   nextPlayer = async userId => {
     const { question, session, users } = this.props
+    console.log('debug nextPlayer')
     await updateQuestion({
       ...question,
       needVote: false,

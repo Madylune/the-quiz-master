@@ -1,6 +1,7 @@
 import React,{ useEffect } from 'react'
 import styled from 'styled-components'
 import shuffle from 'lodash/fp/shuffle'
+import { isSafari, isMobileSafari } from 'react-device-detect'
 
 const StyledResults = styled.div`
   text-align: center;
@@ -18,9 +19,11 @@ const GIFS = [
 ]
 
 const Results = () => {
+  const allowedSound = !isSafari && !isMobileSafari
+
   useEffect(() => {
     var sound = document.querySelector('.Audio')
-    sound.play()
+    allowedSound && sound.play()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

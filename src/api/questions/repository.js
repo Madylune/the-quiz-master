@@ -51,7 +51,7 @@ export const updateQuestion = async data => {
     const entity = {
       ...data,
       needVote: data.needVote,
-      losers: get('losers', data) || get('loser', data) ? [...getOr([], 'losers', data), get('loser', data)] : null
+      losers: get('loser', data) ? [...getOr([], 'losers', data), get('loser', data)] : get('losers', data)
     }
     const updatedQuestion = await update(entity)
     return updatedQuestion

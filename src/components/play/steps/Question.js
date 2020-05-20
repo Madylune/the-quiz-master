@@ -4,6 +4,7 @@ import map from 'lodash/fp/map'
 import get from 'lodash/fp/get'
 import { updateSession } from '../../../api/sessions/repository'
 import { sampleQuestions } from '../../../utils/questions'
+import { isSafari, isMobileSafari } from 'react-device-detect'
 
 const StyledQuestionCard = styled.div`
   background-color: #ffffff;
@@ -25,6 +26,8 @@ const StyledQuestion = styled.div`
   width: 50%;
 `
 
+const allowedSound = !isSafari && !isMobileSafari
+
 const Question = ({ session, isQuizMaster }) => {
   const questions = sampleQuestions()
   
@@ -39,7 +42,7 @@ const Question = ({ session, isQuizMaster }) => {
 
   useEffect(() => {
     var sound = document.querySelector('.Audio')
-    isQuizMaster && sound.play()
+    isQuizMaster && allowedSound && sound.play()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
